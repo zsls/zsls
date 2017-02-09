@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<!-- no cache for modal -->
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache"/>
+	<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"/>
+	<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
+	
+    <link rel="stylesheet" href="{{static_url('resources/css/bootstrap.min.css')}}" />
+	<link rel="stylesheet" href="{{static_url('resources/css/pikaday.css')}}" />
+	<script src="{{static_url('js/jquery.min.js')}}"></script>
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+	<script src="{{static_url('js/pikaday.min.js')}}"></script>
+    
+    <title>zeus-schedule controler</title>
+	
+	<style type="text/css">
+		.row-cnt {
+			top:100px;
+		}
+		.left-nav {
+			left: 0px;
+			border: 1px solid #bce8f1;
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px 2px rgba(161, 159, 159, 0.18);
+		}
+		.border-rad {
+			border-collapse: separate;
+			border: 1px solid #cccccc;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+		}
+	</style>
+    
+</head>
+
+<body onload="setdate()">
+	
+
+<div class="container">
+	{% module NavigationRT("#search-nav") %}
+	<div class="row">
+		
+		<div class="col-md-2 row-cnt left-nav">
+			<form role="form">
+				<div class="form-group" style="margin-top:8px;">
+					<label for="name">域</label>
+					<select class="form-control" id="domain" name="domain">
+						{% for domain in domains %}
+						<option {% if curdomain is not None and domain == curdomain%} selected {% end %}>
+							{{domain}}
+						</option>
+						{% end %} 
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="name">时间</label>
+					<input type="text" name="time" class="form-control" id="datepicker" autocomplete="off" placeholder="可为空"
+						{% if curtime is not None %}
+						value="{{curtime}}"
+						{% end %}
+					>
+					<!-- </input> -->
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-success btn-sm">
+						commit
+					</button>
+				</div>
+			</form>
+		</div>
+		
+		
+		
+		<div class="col-md-9 col-md-offset-0.5 row-cnt">
+			<table class="table table-hover table-bordered border-rad">
+				<thead>
+					<tr class="info">
+						<th>
+							任务单元ID
+						</th>
+						<th>
+							任务状态
+						</th>
+						<th>
+							任务信息
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+				<!-- units [(unit1, {'stat':'FINISHED','domain':'DATA_LOAD'}),()...] -->
+					{% for unit in units %}
+					<tr>
+						<td>
+							{{unit[0]}}
+						</td>
+						<td>
+							{{unit[1]['stat']}}
+						</td>
+						<td>
+							<button class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal" url="/unittask"
+									unitid="{{unit[0]}}" domain="{{unit[1]['domain']}}" data-remote="false">
+							   <span class="glyphicon glyphicon-th-list"></span>
+							</button>
+						</td>
+					</tr>
+					{% end %}
+				</tbody>
+			</table>
+		</div>
+	</div>	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">
+					close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="taskDetail" tabindex="1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				Parameters <textarea id="parameters" readonly="readonly" class="form-control" rows="4"></textarea>
+				ResultMsg <textarea id="resultMsg" readonly="readonly" class="form-control" rows="4"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">
+					close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$("#myModal").on("show.bs.modal", function(e) {
+		var link = $(e.relatedTarget);
+		var dom = link.attr("domain");
+		var id = link.attr("unitid");
+		var timestamp = (new Date()).valueOf();
+		var addr = link.attr("url") + "?domain=" + dom + "&unitid=" + id + "&v=" + timestamp;
+		
+		$.get(addr, function(data){
+			var html = data;
+			$("#myModal .modal-body").html(html);
+			$("#myModal .modal-body").attr("curunit", id);
+		});
+	});
+	
+	$("#myModal").on("hidden.bs.modal", function(e) {
+		$("#myModal .modal-body").html("");
+	});
+
+	$("#taskDetail").on("show.bs.modal", function(e) {
+		var link = $(e.relatedTarget);
+		var parameters = link.attr("parameters");
+		var resultMsg = link.attr("resultMessage");
+		$("#parameters").val(parameters);
+		$("#resultMsg").val(resultMsg);
+	});
+	$("#taskDetail").on("hidden.bs.modal", function(e) {
+		//$("#taskDetail .modal-body").html("");
+	});
+    var picker = new Pikaday(
+    {
+        field: document.getElementById('datepicker'),
+        firstDay: 1,
+        minDate: new Date('2010-01-01'),
+        maxDate: new Date('2020-12-31'),
+        yearRange: [2000,2020]
+    });
+	
+	function redotask(domain, taskid) {
+		var timestamp = (new Date()).valueOf();
+		var url = "/redotask?v=" + timestamp;
+		$.get(url, {query:taskid, domain:domain}, function(data){
+			if (data.retCode == "OK") {
+				alert("redo success");
+				// refresh modal data if success.
+				uid = $("#myModal .modal-body").attr("curunit");
+				$.get("/unittask?v=" + timestamp, {domain:domain, unitid:uid}, function(data){
+					var html = data;
+					$("#myModal .modal-body").html(html);
+				});
+			} else {
+				alert("redo failed, info:" + data.info);
+			}
+		});
+	};
+	
+	function marktaskdone(domain, taskid) {
+		var timestamp = (new Date()).valueOf();
+		var url = "/marktaskdone?v=" + timestamp;
+		$.get(url, {query:taskid, domain:domain}, function(data){
+			if (data.retCode == "OK") {
+				alert("marktaskdone success");
+				// refresh modal data if success.
+				uid = $("#myModal .modal-body").attr("curunit");
+				$.get("/unittask?v=" + timestamp, {domain:domain, unitid:uid}, function(data){
+					var html = data;
+					$("#myModal .modal-body").html(html);
+				});
+			} else {
+				alert("marktaskdone failed, info:" + data.info);
+			}
+		});
+	};
+	
+	function setdate() {
+		timeval = document.getElementById("datepicker").value;
+		if (timeval != null && timeval != "" && timeval.length > 5) {
+			document.getElementById("datepicker").value = format_time(timeval);
+		}
+	};
+	
+	function format_time(input) {
+		if (input.length == 10) {
+			return input;
+		} else {
+			return input.substr(0, 4) + "-" + input.substr(4, 2) + "-" + input.substr(6, 2);
+		}
+	};
+	function showtaskdetail(feedback, parameters) {
+		$("#parameters").val(parameters);
+		$("#resultMsg").val(feedback);
+		$("#taskDetail").modal('show');
+		
+	};
+
+</script>
+	
+</body>
+
+</html>

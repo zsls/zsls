@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<!-- no cache for modal -->
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache"/>
+	<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"/>
+	<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
+	
+    <link rel="stylesheet" href="{{static_url('resources/css/bootstrap.min.css')}}" />
+	<link rel="stylesheet" href="{{static_url('resources/css/pikaday.css')}}" />
+	<script src="{{static_url('js/jquery.min.js')}}"></script>
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+	<script src="{{static_url('js/pikaday.min.js')}}"></script>
+    
+    <title>zeus-schedule controler</title>
+	
+	<style type="text/css">
+		.row-cnt {
+			top:100px;
+		}
+		.left-nav {
+			left: 0px;
+			border: 1px solid #bce8f1;
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px 2px rgba(161, 159, 159, 0.18);
+		}
+		.border-rad {
+			border-collapse: separate;
+			border: 1px solid #cccccc;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+		}
+	</style>
+    
+</head>
+
+<body>
+	
+
+<div class="container">
+	{% module NavigationDT("#search-nav") %}
+	<div class="row">
+		<div class="col-md-12 row-cnt">
+			<table class="table table-hover table-bordered border-rad">
+				<thead>
+					<tr class="info">
+						<th>
+							作业ID
+						</th>
+						<th>
+							最近执行
+						</th>
+						<th>
+							触发时间
+						</th>
+						<th>
+							当前状态
+						</th>
+						<th>
+							详细信息
+						</th>
+						<th>
+							操作
+						</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+					{% for unit in units %}
+					<tr>
+						<td>
+							{{unit}}
+						</td>
+						<td>
+						{% if "lastExetime" in units[unit] %}
+							{{units[unit]["lastExetime"]}}
+						{% end %}
+						</td>
+						<td>
+						{% if "expression" in units[unit] %}
+							{{units[unit]["expression"]}}
+						{% end %}
+						</td>
+						<td>
+							{{units[unit]["stat"]}}
+						</td>
+						<td>
+							<button class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal" url="/unittask"
+									unitid="{{unit}}" data-remote="false">
+							   <span class="glyphicon glyphicon-th-list"></span>
+							</button>
+						</td>
+						<td>
+							{% if units[unit]["stat"] != "Cancel" %}
+								<button type="button" class="btn btn-danger btn-xs" onclick="job_cmd('{{unit}}', 'cancel')">
+								<!-- {% if units[unit]["stat"] != "Finish" %}
+								disabled = "disabled"
+								{% end %} -->
+									cancel
+								</button>
+							{% end %}
+							{% if units[unit]["stat"] == "Cancel" %}
+								<button type="button" class="btn btn-success btn-xs" onclick="job_cmd('{{unit}}', 'resume')">
+									resume
+								</button>
+							{% end %}
+						</td>
+					</tr>
+					{% end %}
+				</tbody>
+			</table>
+		</div>
+	</div>	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">
+					close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+	$("#myModal").on("show.bs.modal", function(e) {
+		var link = $(e.relatedTarget);
+		var id = link.attr("unitid");
+		var timestamp = (new Date()).valueOf();
+		var addr = link.attr("url") + "?unitid=" + id + "&jobtype=dt&v=" + timestamp;
+		
+		$.get(addr, function(data){
+			var html = data;
+			$(".modal-body").html(html);
+			$(".modal-body").attr("curunit", id);
+		});
+	});
+	
+	$("#myModal").on("hidden.bs.modal", function(e) {
+		$(".modal-body").html("");
+	});
+
+	
+	function redotask(domain, taskid) {
+		var timestamp = (new Date()).valueOf();
+		var url = "/redotask?v=" + timestamp;
+		$.get(url, {query:taskid, domain:domain}, function(data){
+			if (data.retCode == "OK") {
+				alert("redo success");
+				// refresh modal data if success.
+				uid = $(".modal-body").attr("curunit");
+				$.get("/unittask?v=" + timestamp, {unitid:uid, jobtype:"dt"}, function(data){
+					var html = data;
+					$(".modal-body").html(html);
+				});
+			} else {
+				alert("redo failed, info:" + data.info);
+			}
+		});
+	}
+	
+	function format_time(input) {
+		if (input.length == 10) {
+			return input;
+		} else {
+			return input.substr(0, 4) + "-" + input.substr(4, 2) + "-" + input.substr(6, 2);
+		}
+	};
+	
+	function job_cmd(job, cmd) {
+		$.ajaxSetup({
+			async : false 
+		});
+		var query = job;
+		var type = null;
+		switch(cmd) {
+			case "cancel" : type = "quartzcmd";  break;
+			case "resume" : type = "quartzcmd"; break;
+		}
+		var timestamp = (new Date()).valueOf();
+		var url = "/jobcancel?v=" + timestamp;
+		$.get(url, {query:query, type:type, jobtype:"dt", cmd: cmd}, function(data) {
+			if (data.retCode == "OK") {
+				alert("cmd success");
+			} else {
+				alert("cmd failed, info:" + data.info);
+			}
+			//add_domain can't reload dt/domainstats.html, load rt/domainstats.html instead
+			//location.reload();
+		});
+		location.reload();
+		
+		$.ajaxSetup({
+			async : true 
+		});
+	}
+	
+
+</script>
+	
+</body>
+
+</html>

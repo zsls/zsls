@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<joblist>
+<jobWarnning>
+<p><b>注意！</b></p>
+<p>1.作业流必须以Start开始，End结束；</p>
+<p>2.div-gateway（分歧网关）与conv-gateway（汇集网关）需要成对出现；</p>
+<p>3.div-gateway只有并行网关一种类型，conv-gateway有并行网关和包含网关两种；</p>
+<p>4.当conv-gateway为并行网关时，要求其所有输入流上的任务都结束，才能继续执行。否则任务流会停滞在conv-gateway处。当conv-gateway为包含网关时，则只要求被激活的输入流上的任务结束即可；</p>
+<p>5.定义conv-gateway的selective属性为true，则其为包含网关；为false，则其为并行网关；</p>
+<p>6.任务必须并且只能定义domain或者targetNode两者之一；</p>
+<p>7.当定义targetNode时，任务所属域的值默认为<b>DOMAIN_DF</b>；</p>
+<p>8.任务支持分片，默认分片数为1，可以通过参数partitions设定；</p>
+<p>9.向任务传递参数时，除用户自定义参数，系统还将增加key为<b>partition</b>，value为<b>任务切片编号</b>的系统参数；</p>
+<p>9.targetNode值的形式为IP:PORT，如192.168.0.1:2601；</p>
+<p>10.任务需定义timeout值，指定任务超时时限，否则默认为0ms；</p>
+<p>11.脚本任务必须定义<b>cmd.dir</b>（脚本路径）与<b>cmd.script</b>（脚本名称）两个参数。</p>
+</jobWarnning>
+<jobentry>
+<jobInfo>
+<p></p>
+<p><b>说明：</b>在示例1中，有分歧网关gate1与汇集网关gate2，gate1与gate2均为并行类型。start之后，进入gate1。遍历gate1的输出流，由于各条输出数据流无执行条件，都将被激活。开始并行执行task1，task2.由于gate2为并行网关，则必须等待所有输入数据流上的任务执行成功切条件得到满足，才能继续进行，到达End。否则将阻塞在gate2处。</p>
+</jobInfo>
+<jobImg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="processonSvg1000" viewBox="76.0 76.0 807.0 370.5" width="580.0" height="300.0"><defs id="ProcessOnDefs1001"><marker id="ProcessOnMarker1009" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1010" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1021" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1022" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1034" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1035" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1041" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1042" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1064" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1065" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1068" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1069" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker></defs><g id="ProcessOnG1002"><path id="ProcessOnPath1003" d="M76.0 76.0H883.0V446.5H76.0V76.0Z" fill="#ffffff"/><g id="ProcessOnG1004"><g id="ProcessOnG1005" transform="matrix(1.0,0.0,0.0,1.0,142.0,234.0)" opacity="1.0"><path id="ProcessOnPath1006" d="M0.0 20.0C0.0 -6.666666666666667 40.0 -6.666666666666667 40.0 20.0C40.0 46.666666666666664 0.0 46.666666666666664 0.0 20.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#b3ff66"/></g><g id="ProcessOnG1007"><path id="ProcessOnPath1008" d="M182.0 254.0L220.75 254.0L220.75 254.0L244.2639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1009)"/></g><g id="ProcessOnG1011" transform="matrix(1.0,0.0,0.0,1.0,336.0,219.0)" opacity="1.0"><path id="ProcessOnPath1012" d="M0.0 4.0Q0.0 0.0 4.0 0.0L96.0 0.0Q100.0 0.0 100.0 4.0L100.0 66.0Q100.0 70.0 96.0 70.0L4.0 70.0Q0.0 70.0 0.0 66.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#99ffff"/><g id="ProcessOnG1013" transform="matrix(1.0,0.0,0.0,1.0,10.0,26.875)"><text id="ProcessOnText1014" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="40.0" y="13.325">task2</text></g></g><g id="ProcessOnG1015" transform="matrix(1.0,0.0,0.0,1.0,336.0,139.0)" opacity="1.0"><path id="ProcessOnPath1016" d="M0.0 4.0Q0.0 0.0 4.0 0.0L96.0 0.0Q100.0 0.0 100.0 4.0L100.0 66.0Q100.0 70.0 96.0 70.0L4.0 70.0Q0.0 70.0 0.0 66.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#99ffff"/><g id="ProcessOnG1017" transform="matrix(1.0,0.0,0.0,1.0,10.0,26.875)"><text id="ProcessOnText1018" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="40.0" y="13.325">task1</text></g></g><g id="ProcessOnG1019"><path id="ProcessOnPath1020" d="M436.0 174.0L679.0 174.0L679.0 213.7639320225002" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1021)"/><g id="ProcessOnG1023" transform="matrix(1.0,0.0,0.0,1.0,577.3819660112501,165.875)"><path id="ProcessOnPath1024" d="M0 0H72.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-36.0,0.0)"/><text id="ProcessOnText1025" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="0.0" y="13.325">CODE = OK</text></g></g><g id="ProcessOnG1026" transform="matrix(1.0,0.0,0.0,1.0,654.0,229.0)" opacity="1.0"><path id="ProcessOnPath1027" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#ffff33"/><path id="ProcessOnPath1028" d="M23.0 12.5L23.0 37.5L27.0 37.5L27.0 12.5L23.0 12.5ZM12.5 23.0L12.5 27.0L37.5 27.0L37.5 23.0L12.5 23.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="#323232"/><path id="ProcessOnPath1029" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="none"/><g id="ProcessOnG1030" transform="matrix(1.0,0.0,0.0,1.0,-35.0,56.875)"><text id="ProcessOnText1031" fill="#323232" font-weight="bold" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="60.0" y="13.325">gate2</text></g></g><g id="ProcessOnG1032"><path id="ProcessOnPath1033" d="M436.0 254.0L545.0 254.0L545.0 254.0L638.7639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1034)"/><g id="ProcessOnG1036" transform="matrix(1.0,0.0,0.0,1.0,537.3819660112501,245.875)"><path id="ProcessOnPath1037" d="M0 0H132.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-66.0,0.0)"/><text id="ProcessOnText1038" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="0.0" y="13.325">MSG CONTAINS 'xxx'</text></g></g><g id="ProcessOnG1039"><path id="ProcessOnPath1040" d="M704.0 254.0L743.5 254.0L743.5 254.0L767.7639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1041)"/></g><g id="ProcessOnG1043" transform="matrix(1.0,0.0,0.0,1.0,783.0,234.0)" opacity="1.0"><path id="ProcessOnPath1044" d="M0.0 20.0C0.0 -6.666666666666667 40.0 -6.666666666666667 40.0 20.0C40.0 46.666666666666664 0.0 46.666666666666664 0.0 20.0Z" stroke="#323232" stroke-width="4.0" stroke-dasharray="none" opacity="1.0" fill="#cc0000"/><g id="ProcessOnG1045" transform="matrix(1.0,0.0,0.0,1.0,-40.0,46.875)"><text id="ProcessOnText1046" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="60.0" y="13.325">End</text></g></g><g id="ProcessOnG1047" transform="matrix(1.0,0.0,0.0,1.0,96.0,96.0)" opacity="1.0"><path id="ProcessOnPath1048" d="M0.0 0.0L752.0 0.0L752.0 318.0L0.0 318.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="none"/><path id="ProcessOnPath1049" d="M0.0 0.0L40.0 0.0L40.0 318.0L0.0 318.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#e5ccff"/><g id="ProcessOnG1050" transform="matrix(0.0,-1.0,1.0,0.0,8.75,308.0)"><text id="ProcessOnText1051" fill="#323232" font-weight="bold" font-style="normal" text-decoration="blink" font-family="Times New Roman" text-anchor="middle" font-size="18" x="149.0" y="18.45">示例1</text></g></g><g id="ProcessOnG1052" transform="matrix(1.0,0.0,0.0,1.0,150.75,284.0)" opacity="1.0"><path id="ProcessOnPath1053" d="M0.0 0.0L42.5 0.0L42.5 20.0L0.0 20.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="none"/><g id="ProcessOnG1054" transform="matrix(1.0,0.0,0.0,1.0,0.0,1.875)"><text id="ProcessOnText1055" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="21.25" y="13.325">Start</text></g></g><g id="ProcessOnG1056" transform="matrix(1.0,0.0,0.0,1.0,259.5,229.0)" opacity="1.0"><path id="ProcessOnPath1057" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#ffff33"/><path id="ProcessOnPath1058" d="M23.0 12.5L23.0 37.5L27.0 37.5L27.0 12.5L23.0 12.5ZM12.5 23.0L12.5 27.0L37.5 27.0L37.5 23.0L12.5 23.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="#323232"/><path id="ProcessOnPath1059" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="none"/><g id="ProcessOnG1060" transform="matrix(1.0,0.0,0.0,1.0,-35.0,56.875)"><text id="ProcessOnText1061" fill="#323232" font-weight="bold" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="60.0" y="13.325">gate1</text></g></g><g id="ProcessOnG1062"><path id="ProcessOnPath1063" d="M309.5 254.0L322.75 254.0L322.75 254.0L323.75 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1064)"/></g><g id="ProcessOnG1066"><path id="ProcessOnPath1067" d="M284.5 229.0L284.5 174.0L320.7639320225002 174.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1068)"/></g></g></g></svg>
+</jobImg>
+<!-- 需添加<xmp>否则</source>无法显示 -->
+<xmp>
+<job>
+	<id>example1</id>
+	<flowObjs>
+		<task>
+			<id>task1</id>
+			<!-- 此处指定domain为DOMAIN_NAME，则在该集群中挑选一工作节点，执行task1 -->
+			<domain>DOMAIN_NAME</domain>
+			<!-- 设定任务超时时限，单位 毫秒  -->
+			<timeout>60000</timeout>
+			<!-- 参数列表 -->
+			<params>
+				<entry>
+					<string>cmd.dir</string><!-- key -->
+					<string>/script/process</string><!-- value -->
+				</entry>
+				<entry>
+					<string>cmd.script</string>
+					<string>task1.sh</string>
+				</entry>
+			</params>
+		</task>
+		<task>
+			<id>task2</id>
+			<timeout>60000</timeout>
+			<!-- 此处指定targetNode为192.168.0.1:2601，则在IP为192.168.0.1，PORT为2601的工作节点，执行task3 -->
+			<targetNode>192.168.0.1:2601</targetNode>
+			<!-- 任务分片数，默认为1 -->
+			<partitions>10</partitions>
+			<params>
+				<entry>
+					<string>cmd.dir</string>
+					<string>/script/process</string>
+				</entry>
+				<entry>
+					<string>cmd.script</string>
+					<string>task2.sh</string>
+				</entry>
+			</params>
+		</task>
+		<div-gateway>
+			<id>gate1</id>
+		</div-gateway>
+		<conv-gateway>
+			<id>gate2</id>
+			<!-- 此处selective为false，conv-gateway为并行网关 -->
+			<selective>false</selective>
+		</conv-gateway>
+	</flowObjs>
+	<dataFlows>
+		<flow>
+			<source>start</source>
+			<target>gate1</target>
+		</flow>
+		<flow>
+			<source>gate1</source>
+			<target>task1</target>
+		</flow>
+		<flow>
+			<source>gate1</source>
+			<target>task2</target>
+		</flow>
+		<flow>
+			<source>task1</source>
+			<target>gate2</target>
+			<condition>CODE = OK</condition>
+		</flow>
+		<flow>
+			<source>task2</source>
+			<target>gate2</target>
+			<condition>MSG CONTAINS 'xxx'</condition>
+		</flow>
+		<flow>
+			<source>gate2</source>
+			<target>end</target>
+		</flow>
+	</dataFlows>
+</job>
+</xmp>
+</jobentry>
+<jobentry>
+<jobInfo>
+<p></p>
+<p><b>说明：</b>在示例2中，有分歧网关gate1与聚合网关gate2，gate1为并行类型,gate2为包含类型。start之后，遍历其输出数据流，开始执行task1。当task1执行结束后，遍历其输出数据流，进入gate1。
+遍历其输出数据流，当CODE = OK且MSG CONTAINS 'xxx'时，将激活1、2.此时只要task2，task3执行结束，gate2将向后继续执行。当CODE = OK 而  MSG CONTAINS 'xxx'不成立时，将激活1，此时当task2执行结束，gate2便继续向后执行；
+当CODE != OK 且 MSG CONTAINS 'xxx'时，将激活2、3，gate2等待task3、task4执行结束，便向后继续执行；当CODE != OK 而MSG CONTAINS 'xxx'不满足条件时，将激活2，gate2等待task3执行结束便向后继续执行。</p>
+</jobInfo>
+<jobImg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="processonSvg1000" viewBox="75.0 76.0 807.0 370.5" width="580.0" height="300.0"><defs id="ProcessOnDefs1001"><marker id="ProcessOnMarker1023" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1024" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1046" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1047" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1053" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1054" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1064" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1065" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1068" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1069" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1072" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1073" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1079" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1080" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1090" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1091" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker><marker id="ProcessOnMarker1097" markerUnits="userSpaceOnUse" orient="auto" markerWidth="16.23606797749979" markerHeight="10.550836550532098" viewBox="-1.0 -1.3763819204711736 16.23606797749979 10.550836550532098" refX="-1.0" refY="3.8990363547948754"><path id="ProcessOnPath1098" d="M12.0 3.8990363547948754L0.0 7.798072709589751V0.0Z" stroke="#323232" stroke-width="2.0" fill="#323232" transform="matrix(1.0,0.0,0.0,1.0,0.0,0.0)"/></marker></defs><g id="ProcessOnG1002"><path id="ProcessOnPath1003" d="M75.0 76.0H882.0V446.5H75.0V76.0Z" fill="#ffffff"/><g id="ProcessOnG1004"><g id="ProcessOnG1005" transform="matrix(1.0,0.0,0.0,1.0,141.0,234.0)" opacity="1.0"><path id="ProcessOnPath1006" d="M0.0 20.0C0.0 -6.666666666666667 40.0 -6.666666666666667 40.0 20.0C40.0 46.666666666666664 0.0 46.666666666666664 0.0 20.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#b3ff66"/></g><g id="ProcessOnG1007" transform="matrix(1.0,0.0,0.0,1.0,556.0,219.0)" opacity="1.0"><path id="ProcessOnPath1008" d="M0.0 4.0Q0.0 0.0 4.0 0.0L96.0 0.0Q100.0 0.0 100.0 4.0L100.0 66.0Q100.0 70.0 96.0 70.0L4.0 70.0Q0.0 70.0 0.0 66.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#99ffff"/><g id="ProcessOnG1009" transform="matrix(1.0,0.0,0.0,1.0,10.0,26.875)"><text id="ProcessOnText1010" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="40.0" y="13.325">task3</text></g></g><g id="ProcessOnG1011" transform="matrix(1.0,0.0,0.0,1.0,556.0,115.0)" opacity="1.0"><path id="ProcessOnPath1012" d="M0.0 4.0Q0.0 0.0 4.0 0.0L96.0 0.0Q100.0 0.0 100.0 4.0L100.0 66.0Q100.0 70.0 96.0 70.0L4.0 70.0Q0.0 70.0 0.0 66.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#99ffff"/><g id="ProcessOnG1013" transform="matrix(1.0,0.0,0.0,1.0,10.0,26.875)"><text id="ProcessOnText1014" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="40.0" y="13.325">task2</text></g></g><g id="ProcessOnG1015" transform="matrix(1.0,0.0,0.0,1.0,701.0,229.0)" opacity="1.0"><path id="ProcessOnPath1016" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#ffff33"/><path id="ProcessOnPath1017" d="M12.5 25.0C12.5 8.333333333333332 37.5 8.333333333333332 37.5 25.0C37.5 41.66666666666667 12.5 41.66666666666667 12.5 25.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#ffff33"/><path id="ProcessOnPath1018" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="none"/><g id="ProcessOnG1019" transform="matrix(1.0,0.0,0.0,1.0,-35.0,56.875)"><text id="ProcessOnText1020" fill="#323232" font-weight="bold" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="60.0" y="13.325">gate2</text></g></g><g id="ProcessOnG1021"><path id="ProcessOnPath1022" d="M751.0 254.0L766.5 254.0L766.5 254.0L766.7639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1023)"/></g><g id="ProcessOnG1025" transform="matrix(1.0,0.0,0.0,1.0,782.0,234.0)" opacity="1.0"><path id="ProcessOnPath1026" d="M0.0 20.0C0.0 -6.666666666666667 40.0 -6.666666666666667 40.0 20.0C40.0 46.666666666666664 0.0 46.666666666666664 0.0 20.0Z" stroke="#323232" stroke-width="4.0" stroke-dasharray="none" opacity="1.0" fill="#cc0000"/><g id="ProcessOnG1027" transform="matrix(1.0,0.0,0.0,1.0,-40.0,46.875)"><text id="ProcessOnText1028" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="60.0" y="13.325">End</text></g></g><g id="ProcessOnG1029" transform="matrix(1.0,0.0,0.0,1.0,95.0,96.0)" opacity="1.0"><path id="ProcessOnPath1030" d="M0.0 0.0L752.0 0.0L752.0 318.0L0.0 318.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="none"/><path id="ProcessOnPath1031" d="M0.0 0.0L40.0 0.0L40.0 318.0L0.0 318.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#e5ccff"/><g id="ProcessOnG1032" transform="matrix(0.0,-1.0,1.0,0.0,8.75,308.0)"><text id="ProcessOnText1033" fill="#323232" font-weight="bold" font-style="normal" text-decoration="blink" font-family="Times New Roman" text-anchor="middle" font-size="18" x="149.0" y="18.45">示例2</text></g></g><g id="ProcessOnG1034" transform="matrix(1.0,0.0,0.0,1.0,150.75,284.0)" opacity="1.0"><path id="ProcessOnPath1035" d="M0.0 0.0L42.5 0.0L42.5 20.0L0.0 20.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="none"/><g id="ProcessOnG1036" transform="matrix(1.0,0.0,0.0,1.0,0.0,1.875)"><text id="ProcessOnText1037" fill="#323232" font-weight="normal" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="21.25" y="13.325">Start</text></g></g><g id="ProcessOnG1038" transform="matrix(1.0,0.0,0.0,1.0,354.5,229.0)" opacity="1.0"><path id="ProcessOnPath1039" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#ffff33"/><path id="ProcessOnPath1040" d="M23.0 12.5L23.0 37.5L27.0 37.5L27.0 12.5L23.0 12.5ZM12.5 23.0L12.5 27.0L37.5 27.0L37.5 23.0L12.5 23.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="#323232"/><path id="ProcessOnPath1041" d="M0.0 25.0L25.0 0.0L50.0 25.0L25.0 50.0L0.0 25.0Z" stroke="#323232" stroke-width="0.0" stroke-dasharray="none" opacity="1.0" fill="none"/><g id="ProcessOnG1042" transform="matrix(1.0,0.0,0.0,1.0,-35.0,56.875)"><text id="ProcessOnText1043" fill="#323232" font-weight="bold" font-style="normal" text-decoration="blink" font-family="Arial,宋体" text-anchor="middle" font-size="13" x="60.0" y="13.325">gate1</text></g></g><g id="ProcessOnG1044"><path id="ProcessOnPath1045" d="M404.5 254.0L480.25 254.0L480.25 254.0L540.7639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1046)"/><g id="ProcessOnG1048" transform="matrix(1.0,0.0,0.0,1.0,472.6319660112501,245.875)"><path id="ProcessOnPath1049" d="M0 0H78.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-39.0,0.0)"/><text id="ProcessOnText1050" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="0.0" y="13.325">CODE != OK</text></g></g><g id="ProcessOnG1051"><path id="ProcessOnPath1052" d="M379.5 229.0L379.5 150.0L540.7639320225002 150.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1053)"/><g id="ProcessOnG1055" transform="matrix(1.0,0.0,0.0,1.0,420.6319660112501,141.875)"><path id="ProcessOnPath1056" d="M0 0H74.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-37.0,0.0)"/><text id="ProcessOnText1057" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="0.0" y="13.325">CODE = OK</text></g></g><g id="ProcessOnG1058" transform="matrix(1.0,0.0,0.0,1.0,215.0,219.0)" opacity="1.0"><path id="ProcessOnPath1059" d="M0.0 4.0Q0.0 0.0 4.0 0.0L96.0 0.0Q100.0 0.0 100.0 4.0L100.0 66.0Q100.0 70.0 96.0 70.0L4.0 70.0Q0.0 70.0 0.0 66.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#66ffff"/><g id="ProcessOnG1060" transform="matrix(1.0,0.0,0.0,1.0,10.0,26.875)"><text id="ProcessOnText1061" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="40.0" y="13.325">task1</text></g></g><g id="ProcessOnG1062"><path id="ProcessOnPath1063" d="M315.0 254.0L334.75 254.0L334.75 254.0L339.2639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1064)"/></g><g id="ProcessOnG1066"><path id="ProcessOnPath1067" d="M181.0 254.0L198.0 254.0L198.0 254.0L199.7639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1068)"/></g><g id="ProcessOnG1070"><path id="ProcessOnPath1071" d="M656.0 254.0L678.5 254.0L678.5 254.0L685.7639320225002 254.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1072)"/><g id="ProcessOnG1074" transform="matrix(1.0,0.0,0.0,1.0,670.8819660112501,245.875)"><path id="ProcessOnPath1075" d="M0 0H8.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-4.0,0.0)"/><text id="ProcessOnText1076" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="0.0" y="13.325">2</text></g></g><g id="ProcessOnG1077"><path id="ProcessOnPath1078" d="M656.0 150.0L726.0 150.0L726.0 213.7639320225002" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1079)"/><g id="ProcessOnG1081" transform="matrix(1.0,0.0,0.0,1.0,722.8819660112501,141.875)"><path id="ProcessOnPath1082" d="M0 0H8.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-4.0,0.0)"/><text id="ProcessOnText1083" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="0.0" y="13.325">1</text></g></g><g id="ProcessOnG1084" transform="matrix(1.0,0.0,0.0,1.0,559.0,324.0)" opacity="1.0"><path id="ProcessOnPath1085" d="M0.0 4.0Q0.0 0.0 4.0 0.0L96.0 0.0Q100.0 0.0 100.0 4.0L100.0 66.0Q100.0 70.0 96.0 70.0L4.0 70.0Q0.0 70.0 0.0 66.0Z" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" opacity="1.0" fill="#66ffff"/><g id="ProcessOnG1086" transform="matrix(1.0,0.0,0.0,1.0,10.0,26.875)"><text id="ProcessOnText1087" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="40.0" y="13.325">task4</text></g></g><g id="ProcessOnG1088"><path id="ProcessOnPath1089" d="M379.5 279.0L379.5 359.0L543.7639320225002 359.0" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1090)"/><g id="ProcessOnG1092" transform="matrix(1.0,0.0,0.0,1.0,421.6319660112501,350.875)"><path id="ProcessOnPath1093" d="M0 0H136.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-68.0,0.0)"/><text id="ProcessOnText1094" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="0.0" y="13.325">MSG CONTAINS 'xxx'</text></g></g><g id="ProcessOnG1095"><path id="ProcessOnPath1096" d="M659.0 359.0L726.0 359.0L726.0 294.2360679774998" stroke="#323232" stroke-width="2.0" stroke-dasharray="none" fill="none" marker-end="url(#ProcessOnMarker1097)"/><g id="ProcessOnG1099" transform="matrix(1.0,0.0,0.0,1.0,724.8819660112501,350.875)"><path id="ProcessOnPath1100" d="M0 0H8.0V16.25H0Z" fill="#fff" transform="matrix(1.0,0.0,0.0,1.0,-4.0,0.0)"/><text id="ProcessOnText1101" fill="#000000" font-weight="normal" font-style="normal" text-decoration="blink" font-family="微软雅黑" text-anchor="middle" font-size="13" x="0.0" y="13.325">3</text></g></g></g></g></svg>
+</jobImg>
+<xmp>
+<job>
+	<id>example2</id>
+	<flowObjs>
+		<task>
+			<id>task1</id>
+			<!-- 此处指定domain为DOMAIN_NAME，则在该集群中挑选一工作节点，执行task1 -->
+			<domain>DOMAIN_NAME</domain>
+			<!-- <targetNode>192.168.0.1:2601</targetNode> -->
+			<!-- 设定任务超时时限，单位 毫秒  -->
+			<timeout>60000</timeout>
+			<!-- 任务分片数，默认为1 -->
+			<partitions>3</partitions>
+			<!-- 参数列表 -->
+			<params>
+				<entry>
+					<string>param1</string><!-- key -->
+					<string>value1</string><!-- value -->
+				</entry>
+				<entry>
+					<string>param2</string>
+					<string>value2</string>
+				</entry>
+			</params>
+		</task>
+		<task>
+			<id>task2</id>
+			<!-- 此处指定domain为DOMAIN_NAME，则在该集群中挑选一工作节点，执行task2 -->
+			<domain>DOMAIN_NAME</domain>
+			<params>
+				<entry>
+					<string>param1</string>
+					<string>value1</string>
+				</entry>
+				<entry>
+					<string>param2</string>
+					<string>value2</string>
+				</entry>
+			</params>
+		</task>
+		<task>
+			<id>task3</id>
+			<!-- 此处指定targetNode为192.168.0.1:2601，则在IP为192.168.0.1，PORT为2601的工作节点，执行task3 -->
+			<targetNode>192.168.0.1</targetNode>
+			<params>
+				<entry>
+					<string>param1</string>
+					<string>value1</string>
+				</entry>
+				<entry>
+					<string>param2</string>
+					<string>value2</string>
+				</entry>
+			</params>
+		</task>
+		<task>
+			<id>task4</id>
+			<domain>DOMAIN_NAME</domain>
+			<params>
+				<entry>
+					<string>param1</string>
+					<string>value1</string>
+				</entry>
+				<entry>
+					<string>param2</string>
+					<string>value2</string>
+				</entry>
+			</params>
+		</task>
+		<div-gateway>
+			<id>gate1</id>
+		</div-gateway>
+		<conv-gateway>
+			<id>gate2</id>
+			<!-- 此处selective为true，conv-gateway为包含网关 -->
+			<selective>true</selective>
+		</conv-gateway>
+	</flowObjs>
+	<dataFlows>
+		<flow>
+			<source>start</source>
+			<target>task1</target>
+		</flow>
+		<flow>
+			<source>task1</source>
+			<target>gate1</target>
+		</flow>
+		<flow>
+			<source>gate1</source>
+			<target>task2</target>
+			<condition>CODE = OK</condition>
+		</flow>
+		<flow>
+			<source>gate1</source>
+			<target>task3</target>
+			<condition>CODE != OK</condition>
+		</flow>
+		<flow>
+			<source>gate1</source>
+			<target>task4</target>
+			<condition>MSG CONTAINS 'xxx'</condition>
+		</flow>
+		<flow>
+			<source>task2</source>
+			<target>gate2</target>
+		</flow>
+		<flow>
+			<source>task3</source>
+			<target>gate2</target>
+		</flow>
+		<flow>
+			<source>task4</source>
+			<target>gate2</target>
+		</flow>
+		<flow>
+			<source>gate2</source>
+			<target>end</target>
+		</flow>
+	</dataFlows>
+</job>
+</xmp>
+</jobentry>
+</joblist>

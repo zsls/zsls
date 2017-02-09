@@ -1,0 +1,37 @@
+<style type="text/css">
+#navBarRT.navbar-brand {
+border: 0px;
+background-color: transparent;
+};
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">		
+			<div class="navbar-header">
+				<div class="btn-group">
+					<button id="navBarRT" type="button" class="navbar-brand" data-toggle="dropdown">
+						Zues-Schedule&nbsp;<span style="font-size:12px;color:red;">实时作业</span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="/?jobtype=rt">实时任务(RT)</a></li>
+						<li class="divider"></li>
+						<li><a href="/?jobtype=dt">定时任务(DT)</a></li>
+					</ul>
+				</div>
+			</div>
+			<div>
+			  <ul class="nav navbar-nav">
+				 <li id = "node-nav" ><a href="/?jobtype=rt">节点管理</a></li>
+				 <li id = "domain-nav" ><a href="/domainstat?jobtype=rt">域管理</a></li>
+				 <li id = "search-nav" ><a href="/taskstat?jobtype=rt">任务查询</a></li>
+				 <li id = "send-nav" ><a href="/sendtask?jobtype=rt">任务发送</a></li>
+			  </ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+(function (){
+	$("{%raw activeTag %}").addClass("active");
+})();
+</script>

@@ -1,0 +1,58 @@
+<job>
+	<id>id-test</id>
+	<flowObjs>
+		<conv-gateway>
+			<id>id-gate</id>
+		</conv-gateway>
+		<task>
+			<id>id-task-1</id>
+			<domain>TEST_DEV</domain>
+			<!-- <targetNode>192.168.52.15:2601</targetNode> -->	
+			<timeout>15000</timeout>
+			<params>
+				<entry>
+					<string>DATA_PATH</string>
+					<string>/tmp</string>
+				</entry>
+			</params>
+		</task>
+		<task>
+			<id>id-task-2</id>
+			<domain>TEST_DEV</domain>
+			<!-- <targetNode>192.168.52.15:2601</targetNode>	 -->
+			<timeout>15000</timeout>
+			<params>
+				<entry>
+					<string>DATA_PATH</string>
+					<string>/usr</string>
+				</entry>
+			</params>
+			<retryOp>
+				<condition>CODE != OK</condition>
+				<num>1</num>
+			</retryOp>
+		</task>
+	</flowObjs>
+	<dataFlows>
+		<flow>
+			<source>start</source>
+			<target>id-task-1</target>
+		</flow>
+		<flow>
+			<source>start</source>
+			<target>id-task-2</target>
+		</flow>
+		<flow>
+			<source>id-task-1</source>
+			<target>id-gate</target>
+		</flow>
+		<flow>
+			<source>id-task-2</source>
+			<target>id-gate</target>
+		</flow>
+		<flow>
+			<source>id-gate</source>
+			<target>end</target>
+		</flow>
+	</dataFlows>
+</job>

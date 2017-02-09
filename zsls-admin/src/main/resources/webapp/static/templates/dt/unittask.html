@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<table class="table table-hover table-condensed table-bordered">
+	<thead>
+		<tr class="info">
+			<th>
+				taskid
+			</th>
+			<th>
+				status
+			</th>
+			<td>
+				domain
+			</td>
+			<td>
+				resultMsg
+			</td>
+			<!-- <th>
+				redoTask
+			</th> -->
+		</tr>
+	</thead>
+	<tbody>
+		{% for key, task in tasks.items() %}
+		<tr>
+			<td>
+				{{key}}
+			</td>
+			<td>
+				{{task["stat"]}}
+			</td>
+			<td>
+				{{task["domain"]}}
+			</td>
+			<td>
+				{% if "resultMessage" in task %}
+				{{task["resultMessage"]}}
+				{% end %}
+			</td>
+			<!-- <td>
+				<button type="button" class="btn btn-success btn-xs {{task['domain']}}-btn"
+					{% if task['stat'] != 'Finished' and task['stat'] != 'Fail' %}
+						disabled='disabled' 
+					{% end %}
+					onclick=redotask('{{task["domain"]}}','{{key}}')
+				>
+					redo
+				</button>
+			</td> -->
+		</tr>
+		{% end %}
+	</tbody>
+</table>

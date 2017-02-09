@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<!-- no cache for modal -->
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache"/>
+	<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"/>
+	<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
+	
+    <link rel="stylesheet" href="{{static_url('resources/css/bootstrap.min.css')}}" />
+	<link rel="stylesheet" href="{{static_url('resources/css/pikaday.css')}}" />
+	<script src="{{static_url('js/jquery.min.js')}}"></script>
+	<script src="{{static_url('js/jquery.tmpl.min.js')}}"></script>
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+	<script src="{{static_url('js/pikaday.min.js')}}"></script>
+    
+    <title>zeus-schedule controler</title>
+	
+	<style type="text/css">
+		.row-cnt {
+			top:100px;
+		}
+		.left-nav {
+			left: 0px;
+			border: 1px solid #bce8f1;
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px 2px rgba(161, 159, 159, 0.18);
+		}
+		.task-label {
+			font-size: 16px;
+			padding: 2px 2px;
+			background-color: #31b0d5;
+		}
+		.form-line-input {
+			width:30%;
+		}
+	</style>
+	
+
+    
+</head>
+
+<body>
+
+<div class="container">
+	{% module NavigationRT("#send-nav") %}
+	
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1 row-cnt left-nav">
+			<div class="row">
+				<form class="form-inline" style="margin:10px;" role="form">
+					<div class="form-group col-md-4">
+						<label>域&nbsp;</label>
+						<select class="form-control" id="domain" name="domain" style="width:70%;">
+							{% for domain in domains %}
+							<option {% if curdomain is not None and domain == curdomain%} selected {%end%}>
+								{{domain}}
+							</option>
+							{% end %} 
+						</select>
+					</div>
+					<div class="form-group col-md-3">
+						<label for="name">超时(秒)&nbsp;</label>
+						<input type="text" id="timeinput" name="time" class="form-control" style="width:50%;" autocomplete="off" value="3600">
+						</input>
+					</div>
+					<div class="form-group col-md-3">
+						<label for="name">优先级&nbsp;</label>
+						<input type="text" id="priority" name="time" class="form-control" style="width:50%;" autocomplete="off" value="0">
+						</input>
+					</div>
+					<div class="form-group col-md-2">
+						<button class="btn btn-warning pull-right" onclick="return add_task()">
+							添加任务
+						</button>
+					</div>
+				</form>
+			</div>
+		
+			<div class="panel-group" id="accordion">
+			</div>
+			
+			<div style="margin:10px auto; width:150px;">
+				<button class="btn btn-success btn-bg" style="align:center;" id="commitunit">
+					提交单元
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	$("#commitunit").click(function() {
+		var unit = new Object();
+		unit.domain = $("#domain option:selected").val();
+		unit.timeout = $("#timeinput").val() * 1000;
+		unit.priority = $("#priority").val();
+		unit.independentTasks = [];
+		unit.relations = [];
+		var success = true;
+		$("div[name='taskpanel']").each(function() {
+			if (!success) {
+				return;
+			}
+			var task = new Object();
+			task.id = $("#tid", this).val();
+			if (task.id == null || $.trim(task.id).length == 0) {
+				alert("任务id不能为空");
+				success = false;
+				return;
+			}
+			task.params = new Object();
+			var pnid = $(this).attr("id");
+			keys = [];
+			vals = [];
+			$("input[name='taskkey']", this).each(function() {
+				if (!success) {
+					return;
+				}
+				var k = $(this).val();
+				if (k == null || $.trim(k).length == 0) {
+					alert("任务属性不能为空");
+					success = false;
+					return;
+				}
+				keys.push(k);
+			});
+			$("input[name='taskval']", this).each(function() {
+				if (!success) {
+					return;
+				}
+				var k = $(this).val();
+				if (k == null || $.trim(k).length == 0) {
+					alert("任务属性不能为空");
+					success = false;
+					return;
+				}
+				vals.push($(this).val());
+			});
+			if (keys.length == vals.length) {
+				for (var i = 0; i < keys.length; i++) {
+					var k = keys[i];
+					task.params[k] = vals[i];
+				}
+			} else {
+				success = false;
+				return;
+			}
+			unit.independentTasks.push(task);
+		});
+		if (!success) {
+			return;
+		}
+		if (unit.independentTasks.length == 0) {
+			alert("任务不能为空！");
+			return;
+		}
+		unit_data = JSON.stringify(unit);
+		/* for test 
+		alert(unit_data);
+		return;
+		*/
+		var timestamp = (new Date()).valueOf();
+		url = "/dosend?v=" + timestamp;
+		$.post(url, {query:unit_data,type:"schedulerequest", jobtype:"rt"}, function(data){
+			if (data.retCode == "OK") {
+				recvid = data.generatedId;
+				alert("提交成功, ID: " + recvid);
+			} else {
+				info = data.info;
+				alert("提交失败，请确保任务id不重复: " + info);
+			}
+		});
+	});
+	
+	function add_task() {
+		var time = (new Date()).valueOf();
+		data = {id:time,};
+		var html = $('#template-task').tmpl(data);
+		//alert(html.html());
+		$("#accordion").append(html);
+		return false;
+	}
+	function remove_task(panelid) {
+		$('#accordion #' + panelid).remove();
+		return false;
+	}
+	function add_param(panelid) {
+		var time = (new Date()).valueOf();
+		data = {id:time,};
+		var html = $('#template-param').tmpl(data).find("tr");
+		//alert(html.html());
+		$("#"+panelid+ " tbody").append(html);
+		return false;
+	}
+	function remove_param(taskid) {
+		$('#'+taskid).remove();
+		return false;
+	}
+</script>
+
+<script id="template-param" type="text/x-jquery-tmpl">
+<div>
+	<table><tbody>
+	<tr id="${data.id}">
+		<td style="padding:2px;">
+			<span class="label label-default" style="">Key</span>
+			<input type="text" class="form-control input-sm" style="display:inline-block; width:80%;" name="taskkey"></input>
+		</td>
+		<td style="padding:2px;">
+			<span class="label label-default">Value</span>
+			<input type="text" class="form-control input-sm" style="display:inline-block; width:80%;" name="taskval"></input>
+		</td>
+		<td style="padding:0px; vertical-align:middle;" align="center">
+			<button type="button" class="btn btn-xs btn-danger" aria-hidden="true" onclick="return remove_param('${data.id}')">
+				&times;
+			</button>
+		</td>
+	</tr>
+	</tbody></table>
+</div>
+</script>
+
+<script id="template-task" type="text/x-jquery-tmpl">
+<div>
+<div class="panel panel-info" name="taskpanel" id="${data.id}" style="margin:10px 0px;">
+	<div class="panel-heading" style="padding:0px 0px;">
+		<form class="form-inline">
+			<div class="input-group" style="width:30%;">
+				<span class="input-group-addon" style="padding:0px;">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse${data.id}" 
+							type="button" class="btn glyphicon glyphicon-chevron-down">
+					</a>
+				</span>
+				<input id="tid" name="tid" type="text" class="form-control" placeholder="任务id，必填"></input>
+			</div>
+			<div class="btn-group pull-right" style="float:right;">
+			  <button type="button" class="btn btn-danger" onclick="return remove_task('${data.id}')">删除任务</button>
+			  <button type="button" class="btn btn-success" onclick="return add_param('${data.id}')">添加参数</button>
+			</div>
+		</form>
+	</div>
+	<div id="collapse${data.id}" class="panel-collapse collapse in">
+		<div class="panel-body" style="padding:0px 0px;">
+			<table class="table table-hover" style="margin-bottom:1px">
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</div>
+</script>
+
+</body>
+
+</html>

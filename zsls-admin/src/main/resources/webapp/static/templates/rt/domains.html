@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="{{static_url('resources/css/bootstrap.min.css')}}" />
+    <!-- can not switch jquery.js and bootstrap.js order -->
+    <script src="{{static_url('js/jquery.min.js')}}"></script>
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    
+    
+    <title>zeus-schedule controler</title>
+	
+	<style type="text/css">
+		.row-cnt {
+			top:100px;
+			left:0px;
+			margin:0px;
+			padding:0px;
+		}
+		.border-rad {
+			border-collapse: separate;
+			border: 1px solid #cccccc;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+		}
+	</style>
+    
+</head>
+
+<body>
+	
+<div class="container">
+	{% module NavigationRT("#domain-nav") %}
+	
+	<div class="row">
+		<div class="col-md-12 row-cnt">
+			<div class="col-xs-12 col-md-12 col-lg-12">
+				<table class="table table-hover table-condensed table-bordered border-rad">
+					<thead>
+						<tr class="info">
+							<th>
+								域
+							</th>
+							<th>
+								状态
+							</th>
+							<th>
+								操作
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for domain in domains %}
+						<tr>
+							<td>
+								{{domain}}
+							</td>
+							<td>
+								{{domains[domain]}}
+							</td>
+							<td>
+								{% if domains[domain] == "Running" %}
+								<button type="button" class="btn btn-danger btn-xs {{domain}}-btn" onclick='cmd_domain("{{domain}}","{{domains[domain]}}", "stopDomain")'>
+									stop
+								</button>
+								{% end %}
+								{% if domains[domain] != "Running" %}
+								<button type="button" class="btn btn-success btn-xs {{domain}}-btn" onclick='cmd_domain("{{domain}}","{{domains[domain]}}", "startDomain")'>
+									start
+								</button>
+								{% end %}
+								<button type="button" class="btn btn-success btn-xs {{domain}}-btn" 
+								{% if domains[domain] == "Abanding" %}
+									disabled='disabled' 
+								{% end %}
+								onclick='cmd_domain("{{domain}}","{{domains[domain]}}", "delDomain")'
+								>
+									delete
+								</button>
+							</td>
+						</tr>
+						{% end %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>	
+</div>
+	
+<script>
+	function cmd_domain(domain, status, cmd) {
+		var timestamp = (new Date()).valueOf();
+		var url = "/domaincontrol?v=" + timestamp;
+		$.get(url, {query:cmd, domain:domain, jobtype:"rt"}, function(data) {
+			if (data.retCode == "OK") {
+				alert("cmd success");
+			} else {
+				alert("cmd failed, info:" + data.info);
+			}
+			location.reload();
+		});
+	}
+</script>
+</body>
+
+</html>

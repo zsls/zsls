@@ -1,0 +1,65 @@
+<table class="table table-hover table-condensed table-bordered">
+	<thead>
+		<tr class="info">
+			<th>
+				taskid
+			</th>
+			<th>
+				status
+			</th>
+			<th>
+				redoTask
+			</th>
+			<th>
+				markDone
+			</th>
+			<th>
+				detail
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for info in tasks[unitid] %}
+		<tr>
+			<td>
+				{{info["taskId"]}}
+			</td>
+			<td>
+				{{info["stat"]}}
+			</td>
+			<td>
+				<button type="button" class="btn btn-success btn-xs {{domain}}-btn"
+					{% if info['stat'] != 'Finished' and info['stat'] != 'Fail' %}
+						disabled='disabled' 
+					{% end %}
+					onclick=redotask('{{domain}}','{{info["taskId"]}}')
+				>
+					redo
+				</button>
+			</td>
+			<td>
+				<button type="button" class="btn btn-success btn-xs {{domain}}-btn"
+					{% if info['stat'] != 'Fail' %}
+						disabled='disabled' 
+					{% end %}
+					onclick=marktaskdone('{{domain}}','{{info["taskId"]}}')
+				>
+					markDone
+				</button>
+			</td>
+			<td>
+				<button class="btn btn-info btn-xs" data-toggle="modal" data-target="#taskDetail" data-remote="false"
+					{% if "parameters" in info %}
+						parameters="{{info['parameters']}}"
+					{% end %}
+					{% if "resultMessage" in info %}
+				 		resultMessage="{{info['resultMessage']}}"
+				 	{% end %} 
+				 >
+					detail
+				</button>
+			</td>
+		</tr>
+		{% end %}
+	</tbody>
+</table>

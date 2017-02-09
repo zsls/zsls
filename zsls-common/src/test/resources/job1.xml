@@ -1,0 +1,57 @@
+<job>
+	<id>job-test</id>
+	<!-- Selectable values: JobFinished, NoTaskAssign; default: NoTaskAssign -->
+	<!-- <onlyBeginWhenPrevFlowFinished>false</onlyBeginWhenPrevFlowFinished> -->
+	<flowObjs>
+		<task>
+			<id>id-task1</id>
+			<!--  <targetNode>192.168.56.113:2601</targetNode> -->
+			<domain>comps_dcacct</domain>
+			<timeout>20000</timeout>
+			<partitions>1</partitions>
+			<params>
+				<entry>
+					<string>cmd.dir</string>
+					<string>D:\\documents\\eclipse_workspace\\local_test</string>
+				</entry>
+				<entry>
+					<string>cmd.script</string>
+					<string>start.bat</string>
+				</entry>
+			</params>
+		</task>
+		<task>
+			<id>id-task2</id>
+			<domain>comps_dcacct</domain>
+			<!-- <targetNode>192.168.56.113:2601</targetNode> -->
+			<timeout>60000</timeout>
+			<partitions>2</partitions>
+			<params>
+				<entry>
+					<string>cmd.dir</string>
+					<string>D:\\documents\\eclipse_workspace\\local_test</string>
+				</entry>
+				<entry>
+					<string>cmd.script</string>
+					<string>start.bat</string>
+				</entry>
+			</params>
+		</task>
+	</flowObjs>
+	<dataFlows>
+		<flow>
+			<source>start</source>
+			<target>id-task1</target>
+		</flow>
+		<flow>
+			<source>id-task1</source>
+			<target>id-task2</target>
+			<condition>CODE = OK</condition>
+		</flow>
+		<flow>
+			<source>id-task2</source>
+			<target>end</target>
+			<condition>CODE = OK</condition>
+		</flow>
+	</dataFlows>
+</job>
