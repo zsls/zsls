@@ -1,3 +1,4 @@
+
 # Abstract
 Zsls(Zeus-Light-Schedule) 是一个分布式作业调度系统，支持实时任务和定时任务。有较好的伸缩性，扩展性以及健壮稳定性。</br>
 Zsls支持的任务类型：</br>
@@ -48,9 +49,11 @@ Zsls依据“阉割版”的BPMN规范实现了一个流引擎，并允许用户
 作业内的任务可以配置分片。具有分片配置的任务会按照配置进行分片产生多个分片任务，然后将不同的分片分配给不同的节点执行。分配时会附带上分片编号。</br>
 8.	**系统监控和管理**</br>
 Admin后台管理，可以监控当前所有的工作节点及运行的任务。可杀掉作业（仅shell类型），强制任务完成，重做任务等</br>
+
 * * * *
-1. **Module Scalable**</br>
-Interfaces desinged for RegistryCenter and JobStore. For now Zookeeper is the only implementation for Registry, while Mysql and Oracle are surpported for JobStore.</br>
+
+1. **Module Extension**</br>
+Interfaces desinged for RegistryCenter and JobStore. For now Zookeeper is the only implementation for Registry(redis maybe supported in the future), while Mysql and Oracle are surpported for JobStore.</br>
 2. **HA**</br>
 HA and recover are supported.</br>
 3. **Fail Over**</br>
