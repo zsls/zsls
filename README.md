@@ -1,4 +1,4 @@
-# Introduction
+![](https://github.com/guodongxiaren/ImageCache/raw/master/Logo/foryou.gif)  # Introduction
 Zsls(Zeus-Light-Schedule) 是一个分布式作业调度系统，支持实时任务和定时任务。有较好的伸缩性，扩展性以及健壮稳定性。</br>
 Zsls(Zeus-Light-Schedule) is a distributed job-schedule system supporting real-time jobs and cron-style jobs, with good scalability and robustness.</br>
 
@@ -17,3 +17,4 @@ Job types that zsls supports:</br>
 # Design
 Zsls采用Master-Worker中心式架构。JobTracker是调度中心，TaskTracker负责任务执行。</br>
 Zsls uses Master-Worker architecture, JobTracker for job schedule and TaskTracker for task execution.</br>
+![](https://github.com/squallyou/zsls/blob/master/pics/arc.png)
