@@ -1,0 +1,67 @@
+{
+  "name": "Magic",
+  "prefix": "magic",
+  "uri": "http://magic",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "BewitchedSequenceFlow",
+      "extends": [
+        "bpmn:SequenceFlow"
+      ],
+      "properties": [
+        {
+          "name": "condition",
+          "isAttr": true,
+          "type": "String"
+        },
+      ]
+    },
+	{
+      "name": "BewitchedInclusiveGateway",
+      "extends": [
+        "bpmn:InclusiveGateway"
+      ],
+      "properties": [
+        {
+          "name": "selective",
+          "isAttr": true,
+          "type": "String"
+        },
+      ]
+    },
+	{
+      "name": "BewitchedTask",
+      "extends": [
+        "bpmn:Task"
+      ],
+      "properties": [
+        {
+          "name": "partitions",
+          "isAttr": true,
+          "type": "Integer",
+		  "default": 0,
+        },
+		{
+          "name": "timeout",
+          "isAttr": true,
+          "type": "Integer",
+		  "default": 60000,
+        },
+		{
+          "name": "domain",
+          "isAttr": true,
+          "type": "String",
+        },
+		{
+          "name": "targetNode",
+          "isAttr": true,
+          "type": "String",
+        },
+      ]
+    },
+  ]
+}

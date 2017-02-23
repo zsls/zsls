@@ -43,7 +43,15 @@ public class ClientRecordFactory {
 	}
 	private static TTaskResult genResult(TaskExecutionInfo info, String domain) {
 		TTaskResult result = new TTaskResult();
-		result.setInfo(info.feedbackMsg);
+		
+		if (info.feedbackMsg != null) {
+			byte[] msg = info.feedbackMsg.getBytes();
+			if (msg.length > 4000)
+				result.setInfo(new String(msg, 0, 4000));
+			else
+				result.setInfo(info.feedbackMsg);
+		}
+			
 		result.setKeyMsg(info.keyMessage);
 		result.setRuntimeParams(info.runtimeParams);
 		TTaskId id = new TTaskId();
