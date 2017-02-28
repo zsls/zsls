@@ -160,6 +160,7 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 			if (dtype == DomainType.RT) {
 				if (!context.getJobStore().initForDomain(domain)) {
 					manager.removeDomain(domain);
+					nodeMetaStore.delDomain(domain);
 					return setInvalidResponse(response, domain, "JobStore failed to init domain " + domain);
 				}
 				context.getTaskProcessor().addRTDomain(domain);

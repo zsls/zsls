@@ -56,7 +56,6 @@ public class SchedClient {
 	private final static String SCHED_DOMAIN = "domain";
 	
 	private final static String SCHED_JOBTYPE_DT = "dt";
-	private final static String SCHED_JOBTYPE_RT = "rt";
 	
 	private List<String> addresses;
 	private int readTimeout;

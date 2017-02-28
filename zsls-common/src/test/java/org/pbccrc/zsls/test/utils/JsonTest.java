@@ -3,7 +3,9 @@ package org.pbccrc.zsls.test.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.pbccrc.zsls.api.client.IJobFlow;
@@ -20,15 +22,29 @@ public class JsonTest {
 		testGson();
 	}
 	
+	static class A {
+		List<String> f1 = new ArrayList<String>();
+		List<String> f2 = new ArrayList<String>();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static void testGson() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("key", "value");
+		map.put("key1", "value1");
 		Gson gson = new Gson();
 		String json = gson.toJson(map);
 		System.out.println(json);
 		map = gson.fromJson(json, Map.class);
 		System.out.println(map);
+		
+		A a = new A();
+		a.f1.add("param1");
+		a.f1.add("param2");
+		a.f2.add("param3");
+		a.f2.add("param4");
+		json = gson.toJson(a);
+		System.out.println(json);
 	}
 	
 	static class Entry {
