@@ -30,7 +30,7 @@ public class ServerQuartzJob {
 	
 	private int triggerCondition;
 	
-	private Map<String, Map<String, String>> tasksMeta;
+	private Map<String, Map<String, String>> taskRuntimeParams;
 	
 	private static final ZslsStateMachineFactory<QJobStat> stateFactory =
 			new ZslsStateMachineFactory<QJobStat>(QJobStat.Init)
@@ -59,7 +59,7 @@ public class ServerQuartzJob {
 		this.origJob = jobFlow;
 		this.jobId = jobFlow.id;
 		this.trigger = trigger.getTrigger(jobId);
-		this.tasksMeta = new HashMap<String, Map<String, String>>();
+		this.taskRuntimeParams = new HashMap<String, Map<String, String>>();
 		this.triggerCondition = jobFlow.refreshIfPrevJobStucked ? TRIGGER_LVL_STUCK : TRIGGER_LVL_NORMAL;
 		if (jobFlow == null || trigger == null)
 			throw new IllegalArgumentException("null trigger or jobFlow");
@@ -142,12 +142,12 @@ public class ServerQuartzJob {
 	}
 	
 	public void updateRuntimeParams(String taskId, Map<String, String> meta) {
-		if (meta != null)
-			this.tasksMeta.put(taskId, meta);
+		if (meta != null && !meta.isEmpty())
+			this.taskRuntimeParams.put(taskId, meta);
 	}
 	
 	public Map<String, String> getRuntimeParams(String taskId) {
-		return this.tasksMeta.get(taskId);
+		return this.taskRuntimeParams.get(taskId);
 	}
 	
 	public int getTriggerCondition() {
