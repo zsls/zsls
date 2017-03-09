@@ -9,6 +9,10 @@
 	<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT"/>
 	
     <link rel="stylesheet" href="{{static_url('resources/css/bootstrap.min.css')}}" />
+    <link rel="stylesheet" href="{{static_url('resources/css/bpmn/diagram-js.css')}}" />
+    <link rel="stylesheet" href="{{static_url('resources/css/bpmn/app.css')}}" />
+  	<link rel="stylesheet" href="{{static_url('resources/fonts/bpmn-font/css/bpmn-embedded.css')}}" />
+    
 	<script src="{{static_url('js/jquery.min.js')}}"></script>
 	<script src="{{static_url('js/jquery.tmpl.min.js')}}"></script>
     <script src="{{static_url('js/bootstrap.min.js')}}"></script>
@@ -24,6 +28,7 @@
  	<div class="form-inline">
  	
 	<input type="text" class="form-control" id="cronExpression" placeholder="请输入cron表达式"/> 
+	<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#bpmn-js" id="js-create-diagram" >BPMN-JS</button>
 	</div>
 	<div class="form-group" style="margin-top:5px;">
 				         <textarea class="form-control" rows="20" placeholder="请输入作业内容" id="dtjob"></textarea>
@@ -53,7 +58,7 @@
 	</div>
 </div>
 </div>
- <div class="modal fade" id="jobDetail" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="jobDetail" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog col-md-8 col-md-offset-1">
 		<div class="modal-content">
 			<div class="modal-body">
@@ -69,6 +74,36 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="bpmn-js" tabindex="-2" role="dialog" aria-hidden="true">
+			  <div class="content" id="js-drop-zone" style="background-color:#FFF;filter:alpha(opacity=75);opacity:0.75">
+			    <div class="message error">
+			      <div class="note">
+			        <p>Ooops, we could not display the BPMN 2.0 diagram.</p>
+			        <div class="details">
+			          <span>cause of the problem</span>
+			          <pre></pre>
+			        </div>
+			      </div>
+			    </div>
+			
+			    <div class="canvas" id="js-canvas"></div>
+			    <div id="js-properties-panel"></div>
+			  </div>
+			  <input id="js-diagram"  type="hidden"/>
+			  <ul class="buttons">
+			    <li>
+			    <button type="button" class="btn btn-success btn-bg" id="js-download-diagram" >BPMN diagram</button>
+			    </li>
+			    <li>
+			    	 <button type="button" class="btn btn-default" data-dismiss="modal" id="closeBPMN">
+						close
+					</button>
+			    </li>
+			  </ul>
+			  <script src="{{static_url('js/bpmn.panel.js')}}"></script>
+</div>
+
+
 </body>
 <script>
 function load() {
@@ -156,6 +191,12 @@ $("#commitdtjob").click(function(){
 	$.ajaxSetup({
 		async : true
 	});
+});
+
+$(function () {
+    $("#closeBPMN").on('click', function() {
+        $('#bpmn-js').modal('hide');
+    });
 });
 </script>
 </html>

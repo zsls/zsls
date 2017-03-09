@@ -148,7 +148,7 @@ public class QueryHelper {
 					rNode.setDomain(task.getDomain());
 					rNode.setStatus(task.getStatus().name());
 					if (task.getResultMsg() != null)
-						rNode.setResultMsg(task.getResultMsg().keymessage);
+						rNode.setResultMsg(task.getResultMsg().feedback);
 					result.addChild(task.getTaskId(), rNode);
 				}
 			}
@@ -176,7 +176,7 @@ public class QueryHelper {
 					stat = memTask.getStatus();
 				task.addParam(ResultNode.STAT, stat);
 				task.addParam(ResultNode.PARAMETERS, t.getParams()== null ? "" : JsonSerilizer.serilize(t.getParams()));
-				task.addParam(ResultNode.RESULT_MESSAGE, t.getResultMsg() == null ? "": t.getResultMsg().keymessage);
+				task.addParam(ResultNode.RESULT_MESSAGE, t.getResultMsg() == null ? "": t.getResultMsg().feedback);
 				list.addElement(task.data());
 			}
 			return result;

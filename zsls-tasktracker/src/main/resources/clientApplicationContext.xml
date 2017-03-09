@@ -25,7 +25,7 @@
 		<property name="recvPort" value="2601" />
 		
 	    <!-- 工作节点所属域(可不填，为默认定时域) -->
-		<property name="domain" value="AAA_BBB"/>
+		<property name="domain" value="FIRST_ORIG_INTEG_DECOM"/>
 		
 		<!-- 所属域是否是定时域，仅在配置了domain时有效 -->
 		<property name="dtDomain" value="false"/>

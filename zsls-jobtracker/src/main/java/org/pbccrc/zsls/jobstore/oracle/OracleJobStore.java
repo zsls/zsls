@@ -65,7 +65,7 @@ public class OracleJobStore extends JdbcJobStore {
 							.from()
 							.table(getUnitTable(domain))
 							.where(COL_UNIT_ID + " >= ?", unitid.getId())
-							.and("ROWNUM <= ?", windowsize)
+							.and("ROWNUM <= " + windowsize)
 							.list(new BatchUnitHandler());
 		return uList;
 	}
