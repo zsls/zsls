@@ -251,11 +251,16 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 				context.getJobStore().updateTask(domain, task, TaskStat.ReSubmit, null);
 				success = true;
 			}
-			if (success)
+			if (success) {
 				Replyer.replyRequest(request);
-			else
+				if (engine != null && dmanager.getDomainStatus(domain) == DomainStatus.Running)
+					tryAssignTask(engine);
+			}
+			else {
 				Replyer.replyAbnormal(request, Status.Invalid, 
 						"invalid task or task status " + task);
+			}
+			break;
 			
 		case RT_NEW_JOB:
 			RTJobFlow unit = event.getUnit();
