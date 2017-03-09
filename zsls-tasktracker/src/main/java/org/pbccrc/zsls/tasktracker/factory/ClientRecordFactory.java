@@ -44,14 +44,10 @@ public class ClientRecordFactory {
 	private static TTaskResult genResult(TaskExecutionInfo info, String domain) {
 		TTaskResult result = new TTaskResult();
 		
-		if (info.feedbackMsg != null) {
-			byte[] msg = info.feedbackMsg.getBytes();
-			if (msg.length > 4000)
-				result.setInfo(new String(msg, 0, 4000));
-			else
-				result.setInfo(info.feedbackMsg);
+		if (info.feedbackMsg != null && info.feedbackMsg.length() > 3096) {
+			info.feedbackMsg = info.feedbackMsg.substring(0, 3096);
 		}
-			
+		result.setInfo(info.feedbackMsg);
 		result.setKeyMsg(info.keyMessage);
 		result.setRuntimeParams(info.runtimeParams);
 		TTaskId id = new TTaskId();

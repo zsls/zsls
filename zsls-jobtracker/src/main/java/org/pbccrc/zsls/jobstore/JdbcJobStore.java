@@ -166,9 +166,12 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 						.update()
 						.table(getTaskTable(domain))
 						.set(COL_TASK_STATUS, stat.getVal());
-		if (r != null && r.feedback != null)
+		if (r != null && r.feedback != null) {
+			if (r.feedback.length() > 2048)
+				r.feedback = r.feedback.substring(0, 2048);
 			sql.set(COL_TASK_FEEDBACK, r.feedback);
-						sql.where(COL_TASK_ID + " = ?", task.id);
+		}
+		sql.where(COL_TASK_ID + " = ?", task.id);
 		int ret = sql.doUpdate();
 		return ret;
 	}
