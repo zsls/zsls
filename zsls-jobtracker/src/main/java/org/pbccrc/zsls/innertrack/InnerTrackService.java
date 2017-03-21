@@ -167,7 +167,9 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 			}
 			manager.changeDomainStatus(domain, DomainStatus.Prepared);
 		}
-		
+		if (manager.getDomainType(domain) != dtype)
+			return setInvalidResponse(response, domain, 
+					"domain "  + domain + " had registered to " + manager.getDomainType(domain) + ", rename and retry");
 		// another register request just arrived earlier
 		DomainStatus status = manager.getDomainStatus(domain);
 		if (status == null || status == DomainStatus.Init || status == DomainStatus.Abandon)

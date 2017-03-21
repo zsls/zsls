@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.pbccrc.zsls.config.Configuration;
+import org.pbccrc.zsls.config.ZslsConstants;
+import org.pbccrc.zsls.jobengine.Task;
 import org.pbccrc.zsls.service.AbstractService;
 
 public class TimeoutManager extends AbstractService {
@@ -77,6 +79,12 @@ public class TimeoutManager extends AbstractService {
 			while (true) {
 				item = queue.take();
 				if (item != null && !item.canceled && !item.item.timeoutCanceled()) {
+					if (item.type == ZslsConstants.TIMEOUT_TASK) {
+						Task t = (Task)item.item;
+						if (t.getTimeout() <= 0)
+							continue;
+					}
+					
 					long now = System.currentTimeMillis();
 					long diff = item.item.expireTime() - now;
 					if (diff > 3) {
