@@ -39,7 +39,7 @@
 			</td>
 			<td>
 				<button type="button" class="btn btn-success btn-xs {{domain}}-btn"
-					{% if info['stat'] != 'Fail' %}
+					{% if info['stat'] == 'Finished' %}
 						disabled='disabled' 
 					{% end %}
 					onclick=marktaskdone('{{domain}}','{{info["taskId"]}}')

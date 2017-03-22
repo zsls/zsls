@@ -265,7 +265,7 @@ public class RequestManager extends CompositeService implements
 		String msg = null;
 		if (dtype == JobType.RT && taskId != null) {
 			Task task = LocalJobManager.getRTJobManager(domain).getTask(taskId);
-			if (task != null && task.getStatus() == TaskStat.Fail) {
+			if (task != null && task.getStatus() != TaskStat.Finished) {
 				boolean ret = context.getJobStore().updateTask(domain, new TaskId(taskId), TaskStat.Finished, null);
 				if (ret) {
 					TaskEvent event = TaskEvent.getTaskResponseEvent(domain, DomainType.RT, TaskResult.fakeCompleteTaskResult(taskId));

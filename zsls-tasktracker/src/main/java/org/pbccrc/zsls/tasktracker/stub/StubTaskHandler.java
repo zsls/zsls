@@ -42,7 +42,7 @@ public class StubTaskHandler implements TaskHandler {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("startTimes", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
 			writer.updateRuntimeParams(map);						// runtime parameters
-			return true;
+			return false;
 		} catch (Exception ignore) {
 			ignore.printStackTrace();
 			return false;
