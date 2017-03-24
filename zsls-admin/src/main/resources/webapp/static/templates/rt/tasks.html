@@ -110,6 +110,13 @@
 					{% end %}
 				</tbody>
 			</table>
+			<ul class="pagination" id="paginationParams" {% if totalPage == 0 %} style="display:none;" {% end %}>
+			    <li {% if int(curPage) == 1 %} class="disabled" {% end %}><a href="javascript:void(0)" onclick="switchPage({{curPage}}, -1)">&laquo;</a></li>
+			    {% for i in range(1, totalPage + 1) %}
+			    <li {% if int(curPage) == i %} class="active" {% end %}> <a href="javascript:void(0)" onclick="switchPage(null, {{i}})">{{i}}</a></li>
+			    {% end %}
+			    <li {% if int(curPage) == int(totalPage) %} class="disabled" {% end %}><a href="javascript:void(0)" onclick="switchPage({{curPage}}, 1)">&raquo;</a></li>
+			</ul>
 		</div>
 	</div>	
 </div>
@@ -117,14 +124,14 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-body">
+			<!-- <div class="modal-body">
 				
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">
 					close
 				</button>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>
@@ -156,13 +163,13 @@
 		
 		$.get(addr, function(data){
 			var html = data;
-			$("#myModal .modal-body").html(html);
-			$("#myModal .modal-body").attr("curunit", id);
+			$("#myModal .modal-content").html(html);
+			$("#myModal .modal-content").attr("curunit", id);
 		});
 	});
 	
 	$("#myModal").on("hidden.bs.modal", function(e) {
-		$("#myModal .modal-body").html("");
+		$("#myModal .modal-content").html("");
 	});
 
 	$("#taskDetail").on("show.bs.modal", function(e) {
@@ -240,6 +247,19 @@
 		$("#taskDetail").modal('show');
 		
 	};
+	function switchPage(curPage, targetPage) {
+		if (curPage)
+			targetPage = curPage + targetPage;
+		if (targetPage < 1 || targetPage > {{totalPage}})
+			return;
+		var url="/taskstat?",
+			domain = $("#domain").val(),
+			time = $("#time").val();
+		url = url + "domain=" + domain +"&curPage=" + targetPage + "&totalPage={{totalPage}}";
+		if (time)
+			url = url + "&time=" + time;
+		location.replace(url);
+	}
 
 </script>
 	

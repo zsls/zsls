@@ -1,3 +1,4 @@
+<div class="modal-body">
 <table class="table table-hover table-condensed table-bordered">
 	<thead>
 		<tr class="info">
@@ -19,7 +20,8 @@
 		</tr>
 	</thead>
 	<tbody>
-		{% for info in tasks[unitid] %}
+	{% set start = (int(curPage) - 1) * int(sizePerPage) %}
+		{% for info in tasks[unitid][start : start + int(sizePerPage)] %}
 		<tr>
 			<td>
 				{{info["taskId"]}}
@@ -63,3 +65,35 @@
 		{% end %}
 	</tbody>
 </table>
+
+</div>
+<div class="modal-footer">
+	<ul class="pagination pagination-sm" id="paginationParams" {% if totalPage == 0 %} style="display:none;" {% end %}>
+	   <li {% if int(curPage) == 1 %} class="disabled" {% end %}><a href="javascript:void(0)" onclick="switchPageUnit({{curPage}}, -1)">&laquo;</a></li>
+	   {% for i in range(1, totalPage + 1) %}
+	   <li {% if int(curPage) == i %} class="active" {% end %}> <a href="javascript:void(0)" onclick="switchPageUnit(null, {{i}})">{{i}}</a></li>
+	   {% end %}
+	   <li {% if int(curPage) == int(totalPage) %} class="disabled" {% end %}><a href="javascript:void(0)" onclick="switchPageUnit({{curPage}}, 1)">&raquo;</a></li>
+	</ul>
+	<!-- <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">
+		close
+	</button> -->
+</div>
+<script>
+	function switchPageUnit(curPage, targetPage) {
+		if (curPage)
+			targetPage = curPage + targetPage;
+		if (targetPage < 1 || targetPage > {{totalPage}})
+			return ;
+	
+		var url="/unittask?",
+			domain = $("#domain").val();
+			
+		var addr = url + "domain=" + domain +"&unitid={{unitid}}&curPage=" + targetPage + "&totalPage={{totalPage}}&sizePerPage={{sizePerPage}}&tasks={{tasks}}";
+		$.get(addr, function(data){
+			var html = data;
+			$("#myModal .modal-content").html(html);
+			$("#myModal .modal-content").attr("curunit", unitid);
+		});
+	}
+</script>
