@@ -38,41 +38,34 @@
 	
 <div class="container">
 	{% module NavigationDT('#node-nav') %}
-	<div class="row">
 		
-		<div class="col-md-2 row-cnt left-nav">
-			<ul class="nav nav-list">
-				<!--
-				<li class="nav-header" style="text-indent:15px">
-					<span >domains</span>
-				</li>
-				-->
-				{% for (domain, nodes) in domains%}
-				<li class="active">
-					<a href="#{{domain}}">{{escape(domain)}}</a>
-				</li>
-				{% end %}
-			</ul>
-		</div>
+	<div class="col-md-2 row-cnt left-nav">
+		<ul class="nav nav-list">
+			<!--
+			<li class="nav-header" style="text-indent:15px">
+				<span >domains</span>
+			</li>
+			-->
+			{% for (domain, nodes) in domains%}
+			<li class="active">
+				<a href="#{{domain}}">{{escape(domain)}}</a>
+			</li>
+			{% end %}
+		</ul>
+	</div>
 		
-		<div class="col-md-9 col-md-offset-0 row-cnt">
-			{% for (domain, nodes) in domains %}
+	<div class="col-md-9 col-md-offset-0 row-cnt">
+		{% for (domain, nodes) in domains %}
 			<div class="panel panel-info">
 			   <div class="panel-heading">
 					<a name="{{domain}}" id="{{domain}}"></a>
-					<h3 class="panel-title">{{domain}}<!--  {% if domain == "DOMAIN_DF" %}<b style="color:red;">(单节点默认域)</b>{% end %}</h3> -->
+					<h3 class="panel-title">{{domain}}</h3>
 			   </div>
 			   <div class="panel-body">
 					{% set nodeids = [k for k in nodes.keys()] %}
+					<div class="row">
 					{% for nodeidx in range(len(nodeids)) %}
-					
-						{% if nodeidx % 2 == 0 %}
-							{% if nodeidx > 0 %}
-							</div>
-							{% end %}
-						<div class="row">
-						{% end %}
-					
+						
 						{% set node = nodeids[nodeidx] %}
 						<div class="col-xs-6 col-md-6 col-lg-6">
 							<table class="table table-hover table-condensed table-bordered border-rad">
@@ -83,7 +76,7 @@
 											task-id
 										</th>
 										<th>
-											triggering-time
+											commit-time
 										</th>
 										<th>
 											status
@@ -91,22 +84,22 @@
 									</tr>
 								</thead>
 								<tbody>
-									{% for taskinfo in nodes[node]%}
+									{% for taskinfo in nodes[node] %}
 									<tr>
 										<td>
 											{{taskinfo}}
 										</td>
 									</tr>
-									{%end%}
+									{% end %}
 								</tbody>
 							</table>
 						</div>
 					{% end %}
-			   </div>
+			   		</div>
+			   	</div>
 			</div>
-			{% end %}
-		</div>
-	</div>	
+		{% end %}
+	</div>
 </div>
 	
 </body>

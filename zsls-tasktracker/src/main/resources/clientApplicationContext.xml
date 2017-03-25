@@ -22,10 +22,10 @@
 		<property name="iothreads" value="4" />
 		
 		<!-- 用于接收任务的的端口,随意配置 -->
-		<property name="recvPort" value="2601" />
+		<property name="recvPort" value="2607" />
 		
 	    <!-- 工作节点所属域(可不填，为默认定时域) -->
-		<property name="domain" value="FIRST_ORIG_INTEG_DECOM"/>
+		<property name="domain" value="THRID_DOMAIN_DF"/>
 		
 		<!-- 所属域是否是定时域，仅在配置了domain时有效 -->
 		<property name="dtDomain" value="false"/>

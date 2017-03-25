@@ -63,7 +63,9 @@ def dict2dict(domainDict):
     for key in domainDict:
         domainDict2["rows"].append({"domain":key,"status":domainDict[key]})
     return domainDict2
-
+def sortRTTask(list):
+    t = sorted(list, key = lambda d : d["taskId"].split('-')[1])
+    return t
 def sortDict(dict):
     #split like unitXXX
     t = sorted(dict.items(), lambda x, y : comp(x[0][4:], y[0][4:]), reverse=False)

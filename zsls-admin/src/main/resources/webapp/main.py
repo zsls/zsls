@@ -91,6 +91,9 @@ class TaskStatHandler(tornado.web.RequestHandler):
 
         _domain = self.get_argument("domain", None)
         _time = self.get_argument("time", None)
+        _curPage = self.get_argument("curPage", 1)
+        _sizePerPage = self.get_argument("sizePerPage", 10)
+        _totalPage = self.get_argument("totalPage", 0)
         _subtype = "task"
         units = {}
         if _domain is not None:
@@ -119,8 +122,11 @@ class TaskStatHandler(tornado.web.RequestHandler):
         else:
             try:
                 us = sortDict(units)
-                self.render('rt' + os.path.sep + 'tasks.html', domains = domains, units = us,
-                        curdomain = _domain, curtime = _time)
+                if (len(us) > 0) :
+                    _totalPage = len(us) / _sizePerPage + 1
+                start = (int(_curPage) - 1) * _sizePerPage
+                self.render('rt' + os.path.sep + 'tasks.html', domains = domains, units = us[start : start + _sizePerPage],
+                        curdomain = _domain, curtime = _time, curPage = _curPage, totalPage = _totalPage)
             except Exception, e:
                 print e
                 self.render_string("rt" + os.path.sep + "error.html", info = units)
@@ -134,6 +140,9 @@ class UnitTaskHandler(tornado.web.RequestHandler):
         _subtype = "unit"
         _unitid = self.get_argument("unitid", None)
         _domain = self.get_argument("domain", None)
+        _totalPage = self.get_argument("totalPage", 0)
+        _curPage = self.get_argument("curPage", 1)
+        _sizePerPage = self.get_argument("sizePerPage", 10)
         if _unitid is None and data is not None and "unitid" in data:
             _unitid = data["unitid"] 
         if _domain is None and data is not None and "domain" in data:
@@ -151,7 +160,12 @@ class UnitTaskHandler(tornado.web.RequestHandler):
         if _jobtype == "dt":
             self.render("dt" + os.path.sep + "unittask.html", tasks = _task)
         else:
-            self.render("rt" + os.path.sep + "unittask.html", domain = _domain, tasks = _task, unitid = _unitid)
+            if (len(_task) > 0):
+                _task[_unitid] = sortRTTask(_task[_unitid])
+                _totalPage = len(_task[_unitid]) / int(_sizePerPage) + 1
+            start = int(_curPage) * int(_sizePerPage)
+            self.render("rt" + os.path.sep + "unittask.html", domain = _domain, tasks = _task,
+                         unitid = _unitid, totalPage = _totalPage, curPage = _curPage, sizePerPage = _sizePerPage)
 
 
 class ReDoTaskHandler(tornado.web.RequestHandler):

@@ -44,8 +44,8 @@ public class ClientRecordFactory {
 	private static TTaskResult genResult(TaskExecutionInfo info, String domain) {
 		TTaskResult result = new TTaskResult();
 		
-		if (info.feedbackMsg != null && info.feedbackMsg.length() > 3096) {
-			info.feedbackMsg = info.feedbackMsg.substring(0, 3096);
+		if (info.feedbackMsg != null && info.feedbackMsg.length() > 1024) {
+			info.feedbackMsg = info.feedbackMsg.substring(0, 1024);
 		}
 		result.setInfo(info.feedbackMsg);
 		result.setKeyMsg(info.keyMessage);
