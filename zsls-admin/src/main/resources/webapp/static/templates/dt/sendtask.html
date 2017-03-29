@@ -33,7 +33,8 @@
 	<div class="form-group" style="margin-top:5px;">
 				         <textarea class="form-control" rows="20" placeholder="请输入作业内容" id="dtjob"></textarea>
 			<div style="margin:10px auto; width:150px;">
-				<button class="btn btn-success btn-bg" style="align:center;" id="commitdtjob">
+				<!-- button 添加onclick可以禁用action（默认为当前url，且无法向tornado传递url中参数）  -->
+				<button class="btn btn-success btn-bg" style="align:center;" id="commitdtjob" onclick="return false;">
 					提交作业
 				</button>
 			</div>
@@ -178,7 +179,7 @@ $("#commitdtjob").click(function(){
 	var timestamp = (new Date()).valueOf();
 	var trigger = JSON.stringify({"cronExpression":cronExpression});
 	url = "/dosend?v=" + timestamp;
-	$.post(url, {query: content, trigger: trigger, type:"cronquartzjob",jobtype:"dt"}, function(data){
+	$.post(url, {query: content, trigger: trigger, type:"cronquartzjob",jobtype:"dt"}, function(data) {
 		if (data.retCode == "OK") {
 			recvid = data.generatedId;
 			alert("提交成功, ID: " + recvid);
@@ -187,7 +188,7 @@ $("#commitdtjob").click(function(){
 			alert("提交失败，请确保任务id不重复: " + info);
 		}
 	});
-	location.reload();
+	
 	$.ajaxSetup({
 		async : true
 	});
