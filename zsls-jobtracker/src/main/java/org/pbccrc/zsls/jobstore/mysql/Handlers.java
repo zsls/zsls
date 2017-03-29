@@ -17,13 +17,13 @@ import org.pbccrc.zsls.api.quartz.CronQuartzTrigger;
 import org.pbccrc.zsls.api.quartz.QuartzTrigger;
 import org.pbccrc.zsls.api.quartz.QuartzTrigger.TriggerType;
 import org.pbccrc.zsls.api.quartz.SimpleQuartzTrigger;
+import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
 import org.pbccrc.zsls.jobstore.JdbcJobStore;
 import org.pbccrc.zsls.store.jdbc.utils.ResultSetHandler;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
-import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
 import org.pbccrc.zsls.tasks.rt.RTTask;
 import org.pbccrc.zsls.utils.JsonSerilizer;
 import org.pbccrc.zsls.utils.TaskUtil;
@@ -91,8 +91,7 @@ public class Handlers {
 				sU.setUnitId(rs.getLong(JdbcJobStore.COL_UNIT_ID));
 				sU.updateUnitIdForAllTasks(rs.getLong(JdbcJobStore.COL_UNIT_ID));
 				int stat = rs.getInt(JdbcJobStore.COL_UNIT_STATUS);
-				if (stat == RJobStat.Finished.getVal())
-					sU.markJobFinish(true);
+				sU.setJobStat(JobStat.getStat(stat));
 				return sU;
 			}
 			return null;
@@ -133,8 +132,7 @@ public class Handlers {
 				IScheduleUnit iS = JsonSerilizer.deserilize(rs.getString(JdbcJobStore.COL_UNIT_CONTENT), IScheduleUnit.class);
 				RTJobFlow unit = TaskUtil.parseJobUnit(iS);
 				int stat = rs.getInt(JdbcJobStore.COL_UNIT_STATUS);
-				if (stat == RJobStat.Finished.getVal())
-					unit.markJobFinish(true);
+				unit.setJobStat(JobStat.getStat(stat));
 				unit.updateUnitIdForAllTasks(id);
 				sList.add(unit);
 			}

@@ -18,6 +18,7 @@ import org.pbccrc.zsls.config.ZslsConstants;
 import org.pbccrc.zsls.entry.TaskId;
 import org.pbccrc.zsls.entry.TaskResult;
 import org.pbccrc.zsls.jobengine.JobFlow;
+import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.Task;
 import org.pbccrc.zsls.jobengine.Task.ExecuteResult;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
@@ -25,7 +26,6 @@ import org.pbccrc.zsls.jobstore.JobStore;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
-import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobId;
 import org.pbccrc.zsls.tasks.rt.RTTask;
 import org.pbccrc.zsls.utils.JsonSerilizer;
@@ -495,7 +495,7 @@ public class ZookeeperJobStore implements JobStore {
 	}
 
 	@Override
-	public boolean updateJob(String domain, RTJobId id, RJobStat stat) {
+	public boolean updateJob(String domain, RTJobId id, JobStat stat) {
 		// TODO Auto-generated method stub
 		return false;
 	}

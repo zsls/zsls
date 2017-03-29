@@ -6,25 +6,6 @@ import org.pbccrc.zsls.jobengine.JobFlow;
 import org.pbccrc.zsls.jobengine.Task;
 
 public class RTJobFlow extends JobFlow {
-	
-	public static enum RJobStat {
-		Unfinish(0),
-		Finished(1);
-		int val;
-		private RJobStat(int val) {
-			this.val = val;
-		}
-		public int getVal() {
-			return this.val;
-		}
-		public static RJobStat getStat(int val) {
-			if (val == Unfinish.val)
-				return RJobStat.Unfinish;
-			else if (val == Finished.val)
-				return RJobStat.Finished;
-			return null;
-		}
-	}
 
 	private RTJobId preUnit;
 	public RTJobId getPreUnit() {

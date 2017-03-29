@@ -121,8 +121,20 @@ public class QueryHelper {
 			for (RTJobFlow u : sList) {
 				ResultNode unitR = new ResultNode();
 				result.addChild(u.getJobId().toString(), unitR);
-				String unitStat = u.isFinished() ? "FINISH" : "INITIAL";
-				unitR.setStatus(unitStat);
+				switch(u.getJobStat()) {
+				case Finished : 
+					unitR.setStatus("FINISH"); 
+					break;
+				case Stuck: 
+					unitR.setStatus("STUCK"); 
+					break;
+				default:
+					unitR.setStatus("INITIAL");
+				}
+				JobManager manager = LocalJobManager.getRTJobManager(domain);
+				JobFlow flow = manager.getUnit(u.getJobId().toString());
+				if (flow != null && "INITIAL".equals(unitR.getStatus()))
+					unitR.setStatus("RUNNING");
 				unitR.setCreatetime(null);
 				unitR.setDomain(domain);
 			}

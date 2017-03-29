@@ -8,11 +8,11 @@ import org.pbccrc.zsls.context.AppContext;
 import org.pbccrc.zsls.eventdispatch.AsyncDispatcher;
 import org.pbccrc.zsls.eventdispatch.Event;
 import org.pbccrc.zsls.eventdispatch.EventHandler;
+import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.JobId;
 import org.pbccrc.zsls.service.AbstractService;
 import org.pbccrc.zsls.tasks.dt.DTJobId;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
-import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobId;
 
 public class UnitMarker extends AbstractService implements EventHandler<UnitEvent> {
@@ -64,7 +64,7 @@ public class UnitMarker extends AbstractService implements EventHandler<UnitEven
 		switch (event.getType()) {
 		case RTFinished:
 			RTJobId id = (RTJobId)event.getUnitId();
-			context.getJobStore().updateJob(domain, id, RJobStat.Finished);
+			context.getJobStore().updateJob(domain, id, JobStat.Finished);
 			break;
 			
 		case DTFinished:
@@ -74,7 +74,7 @@ public class UnitMarker extends AbstractService implements EventHandler<UnitEven
 			
 		case Resubmit:
 			id = (RTJobId)event.getUnitId();
-			context.getJobStore().updateJob(domain, id, RJobStat.Unfinish);
+			context.getJobStore().updateJob(domain, id, JobStat.Unfinish);
 			break;
 		}
 	}
