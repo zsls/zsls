@@ -242,7 +242,7 @@ public class RequestManager extends CompositeService implements
 			context.getQuartzScheduler().scheduleJob(serverJob);
 		} catch (Exception e) {
 			Replyer.replyAbnormal(request, Status.Fail, "exception when scheduling quartz job " + 
-					(jobFlow == null ? "" : jobFlow.id) + ", " + e);
+					jobFlow.id + ", " + e);
 			return;
 		}
 		Replyer.replyRequest(request);

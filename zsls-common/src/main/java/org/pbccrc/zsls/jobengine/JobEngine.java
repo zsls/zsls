@@ -5,7 +5,6 @@ import java.util.TreeSet;
 import org.pbccrc.zsls.api.thrift.records.TaskAction;
 import org.pbccrc.zsls.entry.TaskId;
 import org.pbccrc.zsls.entry.TaskResult;
-import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.JobFlow.TempFlowObj;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
 import org.pbccrc.zsls.jobengine.bpmn.ConvergeGateway;
@@ -161,8 +160,7 @@ public class JobEngine {
 		}
 		else if (obj instanceof TempFlowObj) {
 			TempFlowObj end = (TempFlowObj)obj;
-			//end.executed = true;
-			end.getJobFlow().setJobStat(JobStat.Finished);
+			end.executed = true;
 		}
 		return ret;
 	}

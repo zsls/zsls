@@ -11,33 +11,9 @@ import org.pbccrc.zsls.jobengine.statement.ConditionExp;
 
 public class JobFlow {
 	
-	public static enum JobStat {
-		Unfinish(0),
-		Finished(1),
-		Stuck(2);
-		int val;
-		private JobStat(int val) {
-			this.val = val;
-		}
-		public int getVal() {
-			return this.val;
-		}
-		public static JobStat getStat(int val) {
-			if (val == Unfinish.val)
-				return JobStat.Unfinish;
-			else if (val == Finished.val)
-				return JobStat.Finished;
-			else if (val == Stuck.val)
-				return JobStat.Stuck;
-			return null;
-		}
-	}
-	
 	public JobFlow() {
 		start = new TempFlowObj();
 		end = new TempFlowObj();
-		start.setJobFlow(this);
-		end.setJobFlow(this);
 	}
 	public JobFlow(JobId id) {
 		this();
@@ -51,15 +27,10 @@ public class JobFlow {
 	
 	protected TempFlowObj end;
 	public boolean isFinished() {
-		return this.jobStat == JobStat.Finished;
+		return end.executed;
 	}
-	
-	JobStat jobStat = JobStat.Unfinish;
-	public JobStat getJobStat() {
-		return this.jobStat;
-	}
-	public void setJobStat(JobStat jobStat) {
-		this.jobStat = jobStat;
+	public void markJobFinish(boolean finished) {
+		end.executed = finished;
 	}
 	
 	protected JobId jobId;
@@ -162,10 +133,10 @@ public class JobFlow {
 	}
 
 	public static class TempFlowObj extends FlowObjImpl {
-		/*boolean executed;
+		boolean executed;
 		public boolean isExecuted() {
 			return executed;
-		}*/
+		}
 	}
 
 }

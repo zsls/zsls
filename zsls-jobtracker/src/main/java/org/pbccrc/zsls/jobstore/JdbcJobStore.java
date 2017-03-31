@@ -19,7 +19,6 @@ import org.pbccrc.zsls.entry.TaskResult;
 import org.pbccrc.zsls.exception.store.EntryNotExistException;
 import org.pbccrc.zsls.exception.store.JdbcException;
 import org.pbccrc.zsls.jobengine.JobFlow;
-import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.Task;
 import org.pbccrc.zsls.jobengine.Task.ExecuteResult;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
@@ -41,6 +40,7 @@ import org.pbccrc.zsls.store.jdbc.builder.UpdateSql;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
+import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobId;
 import org.pbccrc.zsls.tasks.rt.RTTask;
 import org.pbccrc.zsls.utils.DateUtils;
@@ -233,7 +233,7 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 	
 	
 	@Override
-	public boolean updateJob(String domain, RTJobId id, JobStat stat) {
+	public boolean updateJob(String domain, RTJobId id, RJobStat stat) {
 		return updateJob(domain, id, stat.getVal(), null) > 0;
 	}
 

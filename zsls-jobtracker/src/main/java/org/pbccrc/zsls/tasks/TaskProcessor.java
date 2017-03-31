@@ -33,15 +33,9 @@ import org.pbccrc.zsls.front.request.utils.Replyer;
 import org.pbccrc.zsls.ha.HAStatus;
 import org.pbccrc.zsls.jobengine.JobEngine;
 import org.pbccrc.zsls.jobengine.JobFlow;
-import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.JobManager;
 import org.pbccrc.zsls.jobengine.Task;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
-import org.pbccrc.zsls.jobengine.bpmn.ConvergeGateway;
-import org.pbccrc.zsls.jobengine.bpmn.DataFlow;
-import org.pbccrc.zsls.jobengine.bpmn.DivergeGateway;
-import org.pbccrc.zsls.jobengine.bpmn.FlowObj;
-import org.pbccrc.zsls.jobengine.statement.Param;
 import org.pbccrc.zsls.nodes.WorkNode;
 import org.pbccrc.zsls.rpc.ZuesRPC;
 import org.pbccrc.zsls.sched.NodePicker;
@@ -53,6 +47,7 @@ import org.pbccrc.zsls.tasks.dt.QuartzTaskManager;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
+import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobId;
 import org.pbccrc.zsls.tasks.rt.RTTask;
 import org.pbccrc.zsls.utils.DomainLogger;
@@ -174,7 +169,6 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			NodeId id = tr.getNodeId();
 			TaskId task = tr.getTaskId();
 			WorkNode node = context.getNodeManager().getNode(domain, id);
-			JobManager manager = LocalJobManager.getJobManager(domain, dtype);
 			
 			if (!id.isFake()) {
 				if (node == null) {
@@ -211,18 +205,6 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			if (node != null)
 				node.removeTask(task);
 			
-			Task tk = manager.getTask(task.id);
-			//in case of the job of tk is unregistered
-			if (tk != null) {
-				for (DataFlow flow : tk.getOutFlows()) {
-					if (isJobFlowStuck(flow, Param.getParam(tr)))
-						if (dtype == DomainType.RT) 
-							context.getJobStore().updateJob(domain, ((RTJobFlow)tk.getJobFlow()).getJobId(), JobStat.Stuck);
-						else
-							context.getJobStore().updateJobStatus(tk.getJobFlow().getJobId().toString(), QJobStat.Stuck);
-				}
-			}
-			
 			// only can assign tasks after the loading of runtime info from all
 			// nodes completed.
 			if (dmanager.getDomainStatus(domain) == DomainStatus.Running) {
@@ -257,7 +239,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 					if (unit != null && unit.isFinished() && userTask != null) {
 						userTask.markReSubmit();
 						unitMarker.unitResubmit(domain, uid);
-						unit.setJobStat(JobStat.Unfinish);
+						unit.markJobFinish(false);
 						context.getJobStore().updateTask(domain, task, TaskStat.ReSubmit, null);
 						engine.feed(unit);
 						success = true;
@@ -410,7 +392,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			for (RTJobFlow unit : jobs) {
 				if (engine.feed(unit) == 0 && unit.isFinished()) {
 					L.info(domain, "load finished job: " + unit.getJobId());
-					context.getJobStore().updateJob(domain, unit.getJobId(), JobStat.Finished);
+					context.getJobStore().updateJob(domain, unit.getJobId(), RJobStat.Finished);
 				}
 			}
 			if (loadedAll) {
@@ -554,41 +536,6 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 	
 	public Object getLoadLock() {
 		return loadLock;
-	}
-	
-	private boolean isJobFlowStuck(DataFlow flow, Param param) {
-		FlowObj source = flow.getSource();
-		FlowObj target = flow.getTarget();
-		if (!(source instanceof Task))
-			return false;
-		
-		if (!flow.isConditionMet(param))
-			return true;
-		
-		if (target instanceof DivergeGateway) {
-			for (DataFlow f : target.getOutFlows()) {
-				if (f.isConditionMet(param))
-					return false;
-			}
-		}
-		
-		if (target instanceof ConvergeGateway) {
-			JobFlow job = target.getJobFlow();
-			Iterator<Task> it = job.getTaskIterator();
-			WorkNode node = null;
-			while (it.hasNext()) {
-				Task task = it.next();
-				if (((Task)source).getTaskId().equals(task.getTaskId()))
-						continue;
-				node = context.getNodeManager().getNodeWithAssignedTask(task.getDomain(), new TaskId(task.getTaskId()));
-				if (node != null)
-					return false;
-			}
-			if (!((ConvergeGateway)target).converge(flow))
-				return true;
-		}
-		
-		return false;
 	}
 	
 }

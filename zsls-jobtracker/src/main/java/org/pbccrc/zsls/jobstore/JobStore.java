@@ -9,12 +9,12 @@ import org.pbccrc.zsls.api.quartz.QuartzTrigger;
 import org.pbccrc.zsls.entry.TaskId;
 import org.pbccrc.zsls.entry.TaskResult;
 import org.pbccrc.zsls.jobengine.JobFlow;
-import org.pbccrc.zsls.jobengine.JobFlow.JobStat;
 import org.pbccrc.zsls.jobengine.Task.ExecuteResult;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
+import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobId;
 
 public interface JobStore {
@@ -31,7 +31,7 @@ public interface JobStore {
 	long instoreJob(RTJobFlow unit, IScheduleUnit origUnit);
 	
 	/* 更新作业状态 */
-	boolean updateJob(String domain, RTJobId id, JobStat stat);
+	boolean updateJob(String domain, RTJobId id, RJobStat stat);
 	
 	/* 更新任务状态 */
 	boolean updateTask(String domain, TaskId task, TaskStat stat, ExecuteResult result);
