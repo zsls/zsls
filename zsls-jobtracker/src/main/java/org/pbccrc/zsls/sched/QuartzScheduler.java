@@ -57,6 +57,7 @@ public class QuartzScheduler extends AbstractService {
 	
 	public synchronized boolean resumeJob(ServerQuartzJob sjob) throws SchedulerException {
 		JobKey key = new JobKey(sjob.getJobId(), GROUP_ZSLS);
+		QuartzTaskManager.getInstance().putJob(sjob.getJobId(), sjob);
 		JobDetail jobDetail = scheduler.getJobDetail(key);
 		if (jobDetail != null)
 			scheduler.resumeJob(key);
