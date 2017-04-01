@@ -17,7 +17,7 @@ Job types that zsls supports:</br>
 Zsls采用Master-Worker中心式架构。JobTracker是调度中心，TaskTracker负责任务执行。</br>
 * * *
 Zsls uses Master-Worker architecture, JobTracker for job schedule and TaskTracker for task execution.</br>
-![](https://github.com/squallyou/zsls/blob/master/pics/arc.png)</br>
+![](https://github.com/zsls/zsls/blob/master/pics/arc.png)</br>
 ### components
 * SchedClient：客户端，负责向JobTracker提交作业，接受反馈。</br>
 * JobTracker：调度中心，负责作业存储、调度、任务分发与结果收集，并提供对外查询，人工干预等服务。</br>
