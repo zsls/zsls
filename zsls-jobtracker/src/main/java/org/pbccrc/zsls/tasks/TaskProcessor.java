@@ -125,6 +125,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 		if (client == null) {
 			client = ZuesRPC.getRpcClient(TaskHandleProtocol.Iface.class, 
 					new InetSocketAddress(id.ip, id.port));
+			//assignClients.put(id, client);
 		}
 		return client;
 	}
@@ -516,7 +517,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 				client = ZuesRPC.getRpcClient(TaskHandleProtocol.Iface.class, 
 					new InetSocketAddress(id.ip, id.port));
 				if (client != null) {
-					this.assignClients.put(id, client);
+					//this.assignClients.put(id, client);
 					if (assign)
 						client.assignTask(request);	
 					else
@@ -524,7 +525,9 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 				}
 			} catch (Exception ee) {
 				throw ee;
-			}
+			} 
+		} finally {
+			ZuesRPC.closeClient(client);
 		}
 		return true;
 	}

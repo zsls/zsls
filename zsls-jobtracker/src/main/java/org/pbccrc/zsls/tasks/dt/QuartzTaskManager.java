@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.pbccrc.zsls.api.client.ITask;
 import org.pbccrc.zsls.context.AppContext;
+import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 
 public class QuartzTaskManager {
 	
@@ -78,6 +79,8 @@ public class QuartzTaskManager {
 		lock.readLock().lock();
 		try {
 			for (ServerQuartzJob job : jobs.values()) {
+				if (job.getJobStat() == QJobStat.Cancel)
+					continue;
 				for (Object o : job.getOrigJob().flowObjs) {
 					if (o instanceof ITask && 
 							domain.equals(((ITask)o).domain))

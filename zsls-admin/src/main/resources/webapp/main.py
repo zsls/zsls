@@ -241,9 +241,7 @@ class WorkNodeHandler(tornado.web.RequestHandler):
 
 class RunningTaskHandler(tornado.web.RequestHandler):
     def get(self):
-        _jobtype = self.get_argument("jobtype", None)
-        if _jobtype is None:
-            _jobtype = "rt"
+        _jobtype = self.get_argument("jobtype", "rt")
         _type = "schedulestat"
         _subtype = "running"
         client = tornado.httpclient.HTTPClient()
@@ -317,9 +315,7 @@ class DoSendHandler(tornado.web.RequestHandler):
         
 class SendTaskHandler(tornado.web.RequestHandler):
     def get(self):
-        _jobtype = self.get_argument("jobtype", None)
-        if _jobtype is None:
-            _jobtype = "rt"
+        _jobtype = self.get_argument("jobtype", "rt")
         _type = "schedulestat"
         client = tornado.httpclient.HTTPClient()
         response = client.fetch(server_addr + \

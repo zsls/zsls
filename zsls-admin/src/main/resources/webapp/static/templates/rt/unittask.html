@@ -96,4 +96,40 @@
 			$("#myModal .modal-content").attr("curunit", unitid);
 		});
 	}
+	
+	function redotask(domain, taskid) {
+		var timestamp = (new Date()).valueOf();
+		var url = "/redotask?v=" + timestamp;
+		$.get(url, {query:taskid, domain:domain}, function(data){
+			if (data.retCode == "OK") {
+				alert("redo success");
+				// refresh modal data if success.
+				uid = $("#myModal .modal-content").attr("curunit");
+				$.get("/unittask?v=" + timestamp, {domain:domain, unitid:uid, curPage: "{{curPage}}"}, function(data){
+					var html = data;
+					$("#myModal .modal-content").html(html);
+				});
+			} else {
+				alert("redo failed, info:" + data.info);
+			}
+		});
+	};
+	
+	function marktaskdone(domain, taskid) {
+		var timestamp = (new Date()).valueOf();
+		var url = "/marktaskdone?v=" + timestamp;
+		$.get(url, {query:taskid, domain:domain}, function(data){
+			if (data.retCode == "OK") {
+				alert("marktaskdone success");
+				// refresh modal data if success.
+				uid = $("#myModal .modal-content").attr("curunit");
+				$.get("/unittask?v=" + timestamp, {domain:domain, unitid:uid, curPage: "{{curPage}}"}, function(data){
+					var html = data;
+					$("#myModal .modal-content").html(html);
+				});
+			} else {
+				alert("marktaskdone failed, info:" + data.info);
+			}
+		});
+	};
 </script>
