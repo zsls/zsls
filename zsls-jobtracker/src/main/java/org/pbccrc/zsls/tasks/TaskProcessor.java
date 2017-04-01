@@ -327,7 +327,6 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 				for (Task t : tmpJob.getTasks())
 					dtJobEngine.removeFromExecutableQueue(t.getTaskId());
 				LocalJobManager.getDTJobManager().unregister(jobId);
-				QuartzTaskManager.getInstance().deleteJob(jobId);
 			}
 			break;
 			
@@ -356,8 +355,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			b.append("\t[").append(job).append("]\n");
 		}
 		for (ServerQuartzJob job : jobs) {
-			if (job.getJobStat() != QJobStat.Cancel)
-				QuartzTaskManager.getInstance().putJob(job.getJobId(), job);
+			QuartzTaskManager.getInstance().putJob(job.getJobId(), job);
 			if (job.getJobStat() == QJobStat.Run) {
 				L.info(ZslsConstants.FAKE_DOMAIN_DT, "now feed unfinished DT job " + job.getJobId());
 				Date date = job.getLastExecuteTime();
