@@ -5,7 +5,6 @@ import java.net.InetSocketAddress;
 import org.apache.log4j.Logger;
 import org.pbccrc.zsls.jobengine.statement.Param;
 import org.pbccrc.zsls.tasktracker.RegInfo.RegStatus;
-import org.pbccrc.zsls.tasktracker.heartbeat.ServerLostListener;
 import org.pbccrc.zsls.tasktracker.register.RegisterListener;
 import org.pbccrc.zsls.tasktracker.register.RegisterResult;
 import org.pbccrc.zsls.tasktracker.taskhandle.TaskContext;
@@ -53,7 +52,6 @@ public class Controller implements RegisterListener, TaskFinishCallback,
 	public void pauseSystemAndReRegister() {
 		if (changeRegisterStatusToLost()) {
 			context.getTaskReporter().pauseSend();
-			context.getHeartBeater().pauseSend();
 			RetryRegisterThread register = new RetryRegisterThread(this);
 			register.start();	
 		}
@@ -64,9 +62,7 @@ public class Controller implements RegisterListener, TaskFinishCallback,
 	public void onRegistered(RegisterResult result) {
 		if (changeRegisterStatusToRegistered(result.getMasterAddr())) {
 			context.setRuntimeMeta(result.getMeta());
-			context.getTaskReporter().updateServerAddr(result.getMasterAddr());
-			context.getHeartBeater().updateServerAddr(result.getMasterAddr());
-			context.getHeartBeater().updateRuntimeMeta(result.getMeta());	
+			context.getTaskReporter().updateServerAddr(result.getMasterAddr(), result.getMeta());
 		}
 	}
 	

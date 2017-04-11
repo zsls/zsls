@@ -16,7 +16,8 @@ import org.pbccrc.zsls.jobengine.Task;
 
 public class WorkerManager {
 	
-	private Map<String, Map<NodeId, WorkNode>> nodes = new ConcurrentHashMap<String, Map<NodeId, WorkNode>>();
+	private ConcurrentHashMap<String, Map<NodeId, WorkNode>> nodes = 
+			new ConcurrentHashMap<String, Map<NodeId, WorkNode>>();
 	
 	public WorkNode getNode(String domain, NodeId id) {
 		Map<NodeId, WorkNode> domainNodes = nodes.get(domain);
@@ -36,12 +37,12 @@ public class WorkerManager {
 	public void addWorkNode(String domain, WorkNode node) {
 		Map<NodeId, WorkNode> domainNodes = nodes.get(domain);
 		if (domainNodes == null) {
-			domainNodes = new ConcurrentHashMap<NodeId, WorkNode>();
-			nodes.put(domain, domainNodes);
+			Map<NodeId, WorkNode> tmp = new ConcurrentHashMap<NodeId, WorkNode>();
+			domainNodes = nodes.putIfAbsent(domain, tmp);
+			if (domainNodes == null)
+				domainNodes = tmp;
 		}
-		synchronized (domainNodes) {
-			domainNodes.put(node.getNodeId(), node);
-		}
+		domainNodes.put(node.getNodeId(), node);
 	}
 	
 	public WorkNode removeWorkNode(String domain, NodeId id) {

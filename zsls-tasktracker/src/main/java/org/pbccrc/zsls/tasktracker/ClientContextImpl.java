@@ -3,7 +3,6 @@ package org.pbccrc.zsls.tasktracker;
 import org.pbccrc.zsls.tasktracker.RegInfo.RegStatus;
 import org.pbccrc.zsls.tasktracker.config.ClientConfig;
 import org.pbccrc.zsls.tasktracker.config.RuntimeMeta;
-import org.pbccrc.zsls.tasktracker.heartbeat.HeartBeater;
 import org.pbccrc.zsls.tasktracker.register.RegisterManager;
 import org.pbccrc.zsls.tasktracker.taskhandle.HandleTaskService;
 import org.pbccrc.zsls.tasktracker.taskhandle.TaskHandler;
@@ -17,7 +16,6 @@ public class ClientContextImpl implements ClientContext {
 	private RegInfo regInfo;
 	private TaskReporter reporter;
 	private HandleTaskService service;
-	private HeartBeater beater;
 	private RegisterManager regManager;
 	private TaskHandler taskHandler;
 	private TaskManager manager;
@@ -74,16 +72,6 @@ public class ClientContextImpl implements ClientContext {
 	@Override
 	public void setHandleTaskService(HandleTaskService service) {
 		this.service = service;
-	}
-
-	@Override
-	public HeartBeater getHeartBeater() {
-		return beater;
-	}
-
-	@Override
-	public void setHeartBeater(HeartBeater beater) {
-		this.beater = beater;
 	}
 
 	@Override

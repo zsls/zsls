@@ -1,10 +1,14 @@
 package org.pbccrc.zsls.tasks;
 
+import java.util.List;
+
+import org.pbccrc.zsls.api.thrift.records.TTaskId;
 import org.pbccrc.zsls.api.thrift.records.TaskAction;
 import org.pbccrc.zsls.domain.DomainManager.DomainType;
 import org.pbccrc.zsls.entry.TaskResult;
 import org.pbccrc.zsls.eventdispatch.AbstractEvent;
 import org.pbccrc.zsls.front.request.QRequest;
+import org.pbccrc.zsls.nodes.WorkNode;
 import org.pbccrc.zsls.tasks.dt.QuartzTaskInfo;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
 
@@ -83,6 +87,16 @@ public class TaskEvent extends AbstractEvent<TaskEventType> {
 		return event;
 	}
 	
+	private WorkNode node;
+	private List<TTaskId> tasks;
+	public static TaskEvent getUpdateRunningEvent(String domain, DomainType dtype,
+			WorkNode node, List<TTaskId> tasks) {
+		TaskEvent event = new TaskEvent(TaskEventType.UPDATE_RUNNING, domain, dtype);
+		event.node = node;
+		event.tasks = tasks;
+		return event;
+	}
+	
 	
 	// constructor
 	private TaskEvent(TaskEventType type, String domain, DomainType dtype) {
@@ -124,6 +138,14 @@ public class TaskEvent extends AbstractEvent<TaskEventType> {
 		this.request = request;
 	}
 	
+
+	public WorkNode getNode() {
+		return node;
+	}
+
+	public List<TTaskId> getTasks() {
+		return tasks;
+	}
 
 	// private methods
 	protected void setDtype(DomainType dtype) {

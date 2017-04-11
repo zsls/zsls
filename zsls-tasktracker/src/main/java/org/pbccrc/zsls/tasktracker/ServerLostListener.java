@@ -1,4 +1,4 @@
-package org.pbccrc.zsls.tasktracker.heartbeat;
+package org.pbccrc.zsls.tasktracker;
 
 import java.net.InetSocketAddress;
 

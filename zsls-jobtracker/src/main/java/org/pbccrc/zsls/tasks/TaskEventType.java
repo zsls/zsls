@@ -8,6 +8,9 @@ public enum TaskEventType {
 	//任务失败
 	FAIL,
 	
+	//更新节点的正在运行的任务信息
+	UPDATE_RUNNING,
+	
 	
 	//RT新任务
 	RT_NEW_JOB,

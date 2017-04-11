@@ -313,12 +313,14 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 		L.warn(domain, msg);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public HeartBeatResponse heartBeat(HeartBeatRequest request) throws TException {
 		HeartBeatResponse response = new HeartBeatResponse();
+		String domain = request.getDomain();
 		// validate node and registration info
 		NodeId id = RecordUtil.trans(request.getNodeid());
-		WorkNode node = context.getNodeManager().getNode(request.getDomain(), id);
+		WorkNode node = context.getNodeManager().getNode(domain, id);
 		if (node == null || !node.isRegistered()) {
 			setAbnormalResponse(response, NodeAction.RE_REGISTER, request.getDomain(),
 					"heartbeat from unregistered node: " + id + ", require reregister");
@@ -336,6 +338,11 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 		if (L.logger().isDebugEnabled()) {
 			L.debug(request.getDomain(), "receive heart beat from " + id);
 		}
+		// dispatch event
+		DomainType dtype = context.getDomainManager().getDomainType(domain);
+		TaskEvent event = TaskEvent.getUpdateRunningEvent(domain, dtype, node, request.getRunningTasks());
+		context.getTaskDispatcher().getEventHandler().handle(event);
+		
 		return response;
 	}
 	
@@ -359,6 +366,7 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 			return response;
 		}
 		// do handle request
+		nodeLiveMonitor.receivedPing(new NodeIdInfo(id, request.getDomain()));
 		if (handleTaskReport(domain, request.getTaskResults(), id, "task report received"))
 			response.setNodeAction(NodeAction.NORMAL);
 		else
