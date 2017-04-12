@@ -367,7 +367,7 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 		}
 		// do handle request
 		nodeLiveMonitor.receivedPing(new NodeIdInfo(id, request.getDomain()));
-		if (handleTaskReport(domain, request.getTaskResults(), id, "task report received"))
+		if (handleTaskReport(domain, request.getTaskResults(), request.getRunningTasks(), id, "task report received"))
 			response.setNodeAction(NodeAction.NORMAL);
 		else
 			response.setNodeAction(NodeAction.INVALID);
@@ -375,7 +375,8 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 	}
 	
 	@SuppressWarnings("unchecked")
-	private boolean handleTaskReport(String domain, List<TTaskResult> results, NodeId id, String msg) {
+	private boolean handleTaskReport(String domain, List<TTaskResult> results, List<TTaskId> runningTasks,
+			NodeId id, String msg) {
 		List<TaskResult> list = new ArrayList<TaskResult>();
 		StringBuilder builder = ThreadLocalBuffer.getLogBuilder(0);
 		builder.append(msg).append(", finished tasks -> ");
@@ -422,7 +423,7 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 							L.error(domain, errMsg);
 					}
 					// dispatch events
-					TaskEvent event = TaskEvent.getTaskResponseEvent(domain, dtype, r);
+					TaskEvent event = TaskEvent.getTaskResponseEvent(domain, dtype, r, runningTasks);
 					context.getTaskDispatcher().getEventHandler().handle(event);
 					break;
 					

@@ -58,11 +58,12 @@ public class TaskEvent extends AbstractEvent<TaskEventType> {
 	}
 	
 	public static TaskEvent getTaskResponseEvent(String domain, DomainType dtype, 
-			TaskResult result) {
+			TaskResult result, List<TTaskId> runningTasks) {
 		TaskEventType type = result.getAction() == TaskAction.COMPLETE ? 
 				TaskEventType.COMPLETE : TaskEventType.FAIL;
 		TaskEvent event = new TaskEvent(type, domain, dtype);
 		event.result = result;
+		event.tasks = runningTasks;
 		return event;
 	}
 	

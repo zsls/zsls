@@ -41,9 +41,11 @@ public class MissedTaskCollector {
 		long curtime = System.currentTimeMillis();
 		
 		HashSet<String> rptRunning = new HashSet<String>();
-		for (TTaskId tid : runningTasks) {
-			monitorQueue.remove(tid.taskid);
-			rptRunning.add(tid.taskid);
+		if (runningTasks != null) {
+			for (TTaskId tid : runningTasks) {
+				monitorQueue.remove(tid.taskid);
+				rptRunning.add(tid.taskid);
+			}	
 		}
 		
 		if (curtime - lastCheckTime > checkInterval) {

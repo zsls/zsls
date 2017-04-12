@@ -103,14 +103,14 @@ public class Controller implements RegisterListener, TaskFinishCallback,
 		if (retryOp != null && retryOp.valid()) {
 			Param p = Param.getParam(info.keyMessage, success);
 			int retryTime = context.getLocalRetryTime();
+			String taskId = context.getTaskDetail().getTaskId();
 			if (retryTime < retryOp.num && retryOp.condition.getValue(p)) {
-				String taskId = context.getTaskDetail().getTaskId();
 				L.info("retry task " + taskId + ", retry time: " + (retryTime + 1));
 				this.context.getHandleTaskService().addToRetry(context);
 				return;
 			}
 			else {
-				L.info("retry condition not met -> [" + info.keyMessage + ", "
+				L.info("retry condition not met for task " + taskId + " -> [" + info.keyMessage + ", "
 						+ retryTime + "], report task to jobtracker");
 			}
 		}

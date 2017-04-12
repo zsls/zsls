@@ -207,7 +207,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 				L.debug(domain, "task " + task + " success from node " + id);
 			
 			engine = dtype == DomainType.RT ? rtJobEngines.get(domain) : dtJobEngine;
-			if (node != null) {
+			if (!id.isFake() && node != null) {
 				checkRunningTasks(domain, dtype, engine, node, event.getTasks());
 				if (!node.removeTask(task))
 					L.error(domain, "completed task " + task + " not registered in node: " + id);
