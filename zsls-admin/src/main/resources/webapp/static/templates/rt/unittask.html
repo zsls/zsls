@@ -88,7 +88,7 @@
 	
 		var url="/unittask?",
 			domain = $("#domain").val();
-			
+		var unitid = "{{unitid}}";
 		var addr = url + "domain=" + domain +"&unitid={{unitid}}&curPage=" + targetPage + "&totalPage={{totalPage}}&sizePerPage={{sizePerPage}}&tasks={{tasks}}";
 		$.get(addr, function(data){
 			var html = data;
