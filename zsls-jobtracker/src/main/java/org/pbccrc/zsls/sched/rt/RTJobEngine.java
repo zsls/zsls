@@ -2,8 +2,10 @@ package org.pbccrc.zsls.sched.rt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.pbccrc.zsls.config.ZslsConstants;
 import org.pbccrc.zsls.entry.TaskId;
@@ -23,6 +25,17 @@ public class RTJobEngine extends JobEngine {
 	private int threshold;
 	private boolean sync;
 	private Map<RTJobId, List<JobFlow>> relatedUnits;
+	private Set<RTJobId> forbidSet;
+	
+	private boolean forbid(RTJobId jobId) {
+		return forbidSet.add(jobId);
+	}
+	private boolean cancelForbid(RTJobId jobId) {
+		return forbidSet.remove(jobId);
+	}
+	private boolean forbidden(RTJobId jobId) {
+		return forbidSet.contains(jobId);
+	}
 	
 	public RTJobEngine(String domain, JobManager manager, int cacheLimit, double factor) {
 		super(manager);
@@ -30,18 +43,21 @@ public class RTJobEngine extends JobEngine {
 		this.cacheLimit = Math.max(cacheLimit, ZslsConstants.MIN_TASK_CACHE);
 		this.threshold = (int) (cacheLimit * factor);
 		this.relatedUnits = new HashMap<RTJobId, List<JobFlow>>(128);
+		this.forbidSet = new HashSet<RTJobId>();
 	}
 
 	public int feed(JobFlow unit) {
 		RTJobFlow u = (RTJobFlow) unit;
 		// whether depend on previous units or not.
-		if (u.getPreUnit() != null && manager.getUnit(u.getPreUnit().toString()) != null) {
+		RTJobId preUnit = u.getPreUnit();
+		if (preUnit != null && (manager.getUnit(preUnit.toString()) != null || forbidden(preUnit))) {
 			List<JobFlow> list = relatedUnits.get(u.getPreUnit());
 			if (list == null) {
 				list = new ArrayList<JobFlow>(2);
 				relatedUnits.put(u.getPreUnit(), list);
 			}
 			list.add(u);
+			forbid(u.getJobId());
 			return 1;
 		}
 		return super.feed(unit);
@@ -56,8 +72,10 @@ public class RTJobEngine extends JobEngine {
 			if (units != null) {
 				for (JobFlow u : units) {
 					this.feed(u);
+					cancelForbid((RTJobId)u.getJobId());
 				}
 			}
+			relatedUnits.remove(unit.getJobId());
 		}
 		return unit;
 	}
