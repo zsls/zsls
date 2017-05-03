@@ -84,8 +84,8 @@ public class HandleTaskService implements TaskHandleProtocol.Iface {
 		if (handler != null) {
 			TaskContext cxt = cxtFactory.newTaskContext(type, taskInfo, request.isRetryTask());
 			Task task = new Task(handler, cxt);
-			executor.execute(task);
 			context.getTaskManager().registerTask(cxt.getTaskDetail().getTaskId(), cxt);
+			executor.execute(task);
 		} else {
 			L.error("TaskHandler is null");
 		}

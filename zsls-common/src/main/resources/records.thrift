@@ -84,6 +84,7 @@ struct ReportTaskRequest {
   1: required string domain;
   2: required TNodeId nodeId;
   3: required list<TTaskResult> taskResults;
+  4: required list<TTaskId> runningTasks;
 }
 
 struct ReportTaskResponse {

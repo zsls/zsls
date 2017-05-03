@@ -24,7 +24,7 @@ public class ClientRecordFactory {
 		this.context = context;
 	}
 	
-	public static ReportTaskRequest genReportRequest(TaskExecutionInfo info, ClientConfig config) {
+	public ReportTaskRequest genReportRequest(TaskExecutionInfo info, ClientConfig config) {
 		ReportTaskRequest request = new ReportTaskRequest();
 		String domain = config.getDomain() == null ? ZslsConstants.DEFAULT_DOMAIN : config.getDomain();
 		request.setDomain(domain);
@@ -39,6 +39,15 @@ public class ClientRecordFactory {
 		List<TTaskResult> results = new ArrayList<TTaskResult>();
 		results.add(genResult(info, config.getDomain()));
 		request.setTaskResults(results);
+		
+		List<TTaskId> tasks = new ArrayList<TTaskId>();
+		Collection<TaskExecutionInfo> set = context.getTaskManager().getTaskExecutionInfoSet();
+		for (TaskExecutionInfo task : set) {
+			String realId = task.context.getTaskDetail().getTaskId();
+			TTaskId taskid = new TTaskId(realId);
+			tasks.add(taskid);
+		}
+		request.setRunningTasks(tasks);
 		return request;
 	}
 	private static TTaskResult genResult(TaskExecutionInfo info, String domain) {
@@ -104,6 +113,12 @@ public class ClientRecordFactory {
 		req.setNodeid(id);
 		
 		List<TTaskId> tasks = new ArrayList<TTaskId>();
+		Collection<TaskExecutionInfo> set = context.getTaskManager().getTaskExecutionInfoSet();
+		for (TaskExecutionInfo task : set) {
+			String realId = task.context.getTaskDetail().getTaskId();
+			TTaskId taskid = new TTaskId(realId);
+			tasks.add(taskid);
+		}
 		req.setRunningTasks(tasks);
 		
 		return req;

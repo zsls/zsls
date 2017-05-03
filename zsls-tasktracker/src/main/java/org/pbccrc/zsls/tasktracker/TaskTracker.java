@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.pbccrc.zsls.exception.ZslsRuntimeException;
 import org.pbccrc.zsls.tasktracker.config.ClientConfig;
 import org.pbccrc.zsls.tasktracker.factory.ClientRecordFactory;
-import org.pbccrc.zsls.tasktracker.heartbeat.HeartBeater;
 import org.pbccrc.zsls.tasktracker.register.RegisterManager;
 import org.pbccrc.zsls.tasktracker.register.RegisterResult;
 import org.pbccrc.zsls.tasktracker.taskhandle.HandleTaskService;
@@ -31,7 +30,6 @@ public class TaskTracker {
 	private static Logger L = Logger.getLogger(TaskTracker.class.getSimpleName());
 	
 	private TaskReporter reporter;
-	private HeartBeater beater;
 	private HandleTaskService service;
 	private RegisterManager regManager;
 	
@@ -75,13 +73,9 @@ public class TaskTracker {
 		regManager = new RegisterManager(factory, addrs);
 		context.setRegisterManager(regManager);
 		
-		// heart beater
-		beater = new HeartBeater(factory, controller);
-		beater.registerFailListener(controller);
-		context.setHeartBeater(beater);
-		
 		// task reporter
-		reporter = new TaskReporter(config, controller);
+		reporter = new TaskReporter(config, controller, factory);
+		reporter.registerFailListener(controller);
 		context.setTaskReporter(reporter);
 		
 		// task_handle server
@@ -99,7 +93,6 @@ public class TaskTracker {
 		// start
 		service.start();
 		reporter.start();
-		beater.start();
 		
 		// try initial register
 		RegisterResult ret = regManager.tryRegister();

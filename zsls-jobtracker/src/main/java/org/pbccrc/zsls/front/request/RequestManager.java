@@ -1,5 +1,6 @@
 package org.pbccrc.zsls.front.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pbccrc.zsls.JobTracker.DomainStatus;
@@ -7,6 +8,7 @@ import org.pbccrc.zsls.api.client.IJobFlow;
 import org.pbccrc.zsls.api.client.old.IScheduleUnit;
 import org.pbccrc.zsls.api.client.old.UnitValidator;
 import org.pbccrc.zsls.api.quartz.QuartzTrigger;
+import org.pbccrc.zsls.api.thrift.records.TTaskId;
 import org.pbccrc.zsls.config.Configuration;
 import org.pbccrc.zsls.config.ZslsConstants;
 import org.pbccrc.zsls.context.AppContext;
@@ -268,7 +270,8 @@ public class RequestManager extends CompositeService implements
 			if (task != null && task.getStatus() != TaskStat.Finished) {
 				boolean ret = context.getJobStore().updateTask(domain, new TaskId(taskId), TaskStat.Finished, null);
 				if (ret) {
-					TaskEvent event = TaskEvent.getTaskResponseEvent(domain, DomainType.RT, TaskResult.fakeCompleteTaskResult(taskId));
+					TaskEvent event = TaskEvent.getTaskResponseEvent(domain, DomainType.RT, 
+							TaskResult.fakeCompleteTaskResult(taskId), new ArrayList<TTaskId>());
 					event.setRequest(request);
 					context.getTaskDispatcher().getEventHandler().handle(event);
 					return;
