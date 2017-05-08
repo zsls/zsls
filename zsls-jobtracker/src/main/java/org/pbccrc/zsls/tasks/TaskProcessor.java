@@ -191,6 +191,9 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			WorkNode node = context.getNodeManager().getNode(domain, event.getNode().getNodeId());
 			JobEngine engine = dtype == DomainType.RT ? rtJobEngines.get(domain) : dtJobEngine;
 			checkRunningTasks(domain, dtype, engine, node, event.getTasks());
+			if (dmanager.getDomainStatus(domain) == DomainStatus.Running) {
+				tryAssignTask(engine);
+			}
 			break;
 		case COMPLETE:
 		case FAIL:
