@@ -22,7 +22,6 @@ public class MissedTaskCollector {
 	@SuppressWarnings("rawtypes")
 	Map<String/*task id*/, Pair> monitorQueue;
 	
-	long lastCheckTime = 0L;
 	long checkInterval;
 	long checkInvalidTime;
 	
@@ -31,7 +30,7 @@ public class MissedTaskCollector {
 		this.context = context;
 		this.monitorQueue = new HashMap<String, Pair>();
 		this.checkInterval = 2000L;
-		this.checkInvalidTime = ZslsConstants.DEFAULT_NODE_LOST;
+		this.checkInvalidTime = checkInterval * 2;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -45,10 +44,10 @@ public class MissedTaskCollector {
 			for (TTaskId tid : runningTasks) {
 				monitorQueue.remove(tid.taskid);
 				rptRunning.add(tid.taskid);
-			}	
+			}
 		}
 		
-		if (curtime - lastCheckTime > checkInterval) {
+		if (curtime - worker.getLastCheckTaskTime() > checkInterval) {
 			for (TaskId id : worker.getRunningTasks()) {
 				if (!rptRunning.contains(id.id) && !monitorQueue.containsKey(id.id)) {
 					TaskAssignInfo item = new TaskAssignInfo(domain, dtype, worker, id.id);
@@ -64,7 +63,7 @@ public class MissedTaskCollector {
 					monitorQueue.remove(taskid);
 				}
 			}
-			lastCheckTime = curtime;
+			worker.setLastCheckTaskTime(curtime);
 		}
 		return ret;
 	}

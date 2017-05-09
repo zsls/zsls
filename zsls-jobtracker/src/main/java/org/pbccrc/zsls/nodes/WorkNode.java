@@ -25,6 +25,10 @@ public class WorkNode {
 	// 是否被手动置为失效。用于人工干预节点状态，比如单台机器升级，故障处理等。
 	private boolean disabled;
 	
+	// 用于校验节点汇报的执行中任务与服务器端所持有的节点执行任务。
+	// 节点汇报运行中的任务有两种情况：1.心跳；2.任务完成反馈。因此汇报间隔上限较高，下限为1个心跳。
+	private long lastCheckTaskTime;
+	
 	
 	public WorkNode(String domain, NodeId id, AppContext context, int maxTaskNum, boolean valid) {
 		this.domain = domain;
@@ -101,6 +105,14 @@ public class WorkNode {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public long getLastCheckTaskTime() {
+		return lastCheckTaskTime;
+	}
+
+	public void setLastCheckTaskTime(long lastCheckTaskTime) {
+		this.lastCheckTaskTime = lastCheckTaskTime;
 	}
 
 	public String toString() {
