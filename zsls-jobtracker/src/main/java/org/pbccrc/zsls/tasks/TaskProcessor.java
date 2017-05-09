@@ -201,13 +201,13 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			NodeId id = tr.getNodeId();
 			TaskId task = tr.getTaskId();
 			node = context.getNodeManager().getNode(domain, id);
-			
 			if (!id.isFake() && node == null) {
 				L.error(domain, "completed task " + task + " from unregistered node: " + id);
 				return;
 			}
+			
 			if (L.logger().isDebugEnabled())
-				L.debug(domain, "task " + task + " success from node " + id);
+				L.debug(domain, "task " + task + " completed from node " + id);
 			
 			engine = dtype == DomainType.RT ? rtJobEngines.get(domain) : dtJobEngine;
 			if (!id.isFake() && node != null) {
@@ -238,14 +238,8 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			
 			// only can assign tasks after the loading of runtime info from all
 			// nodes completed.
-			if (dmanager.getDomainStatus(domain) == DomainStatus.Running) {
+			if (dmanager.getDomainStatus(domain) == DomainStatus.Running)
 				tryAssignTask(engine);
-			}
-			
-			// user mark task as complete by force
-			if (id.isFake()) {
-				Replyer.replyRequest(event.getRequest());
-			}
 			break;
 			
 		case REDO_TASK:	// only RT

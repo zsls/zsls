@@ -36,7 +36,7 @@ public abstract class FrontServer<ReqType, ResType> extends ChannelInboundHandle
 		this.messageHandler = handler;
 		this.factory = factory;
 		inboundHandler = new InnerFrontHandler();
-		EventLoopGroup bossGroup = new NioEventLoopGroup();
+		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup(config.getIoThreads());
         b = new ServerBootstrap();
         b.group(bossGroup, workerGroup)

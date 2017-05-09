@@ -267,19 +267,21 @@ public class RequestManager extends CompositeService implements
 		String msg = null;
 		if (dtype == JobType.RT && taskId != null) {
 			Task task = LocalJobManager.getRTJobManager(domain).getTask(taskId);
-			if (task != null && task.getStatus() != TaskStat.Finished) {
+			TaskStat stat = task != null ? task.getStatus() : null;
+			if (stat == TaskStat.Fail) {
 				boolean ret = context.getJobStore().updateTask(domain, new TaskId(taskId), TaskStat.Finished, null);
 				if (ret) {
 					TaskEvent event = TaskEvent.getTaskResponseEvent(domain, DomainType.RT, 
 							TaskResult.fakeCompleteTaskResult(taskId), new ArrayList<TTaskId>());
 					event.setRequest(request);
 					context.getTaskDispatcher().getEventHandler().handle(event);
+					Replyer.replyRequest(request);
 					return;
 				} else {
 					msg = "failed to mark task " + taskId + " in job store";
 				}
 			} else {
-				msg = "invalid id or status for task " + taskId;
+				msg = "invalid id or status for task " + taskId + ", status: " + stat;
 			}
 		} else {
 			msg = "invalid job type or task id";
