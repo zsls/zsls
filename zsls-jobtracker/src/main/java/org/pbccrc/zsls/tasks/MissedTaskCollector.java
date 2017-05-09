@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import org.pbccrc.zsls.api.thrift.records.TTaskId;
 import org.pbccrc.zsls.collection.Pair;
-import org.pbccrc.zsls.config.ZslsConstants;
 import org.pbccrc.zsls.context.AppContext;
 import org.pbccrc.zsls.domain.DomainManager.DomainType;
 import org.pbccrc.zsls.entry.TaskId;
@@ -29,7 +28,7 @@ public class MissedTaskCollector {
 	public MissedTaskCollector(AppContext context) {
 		this.context = context;
 		this.monitorQueue = new HashMap<String, Pair>();
-		this.checkInterval = 2000L;
+		this.checkInterval = 1000L;
 		this.checkInvalidTime = checkInterval * 2;
 	}
 	
