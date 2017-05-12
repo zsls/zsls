@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.pbccrc.zsls.api.thrift.records.TTaskId;
 import org.pbccrc.zsls.collection.Pair;
+import org.pbccrc.zsls.config.ZslsConstants;
 import org.pbccrc.zsls.context.AppContext;
 import org.pbccrc.zsls.domain.DomainManager.DomainType;
 import org.pbccrc.zsls.entry.TaskId;
@@ -29,7 +30,7 @@ public class MissedTaskCollector {
 		this.context = context;
 		this.monitorQueue = new HashMap<String, Pair>();
 		this.checkInterval = 1000L;
-		this.checkInvalidTime = checkInterval * 2;
+		this.checkInvalidTime = context.getConfig().getInt(ZslsConstants.HEART_BEAT_INTERVAL, ZslsConstants.DEFAULT_HEART_BEAT_INTERVAL) * 2;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -58,8 +59,10 @@ public class MissedTaskCollector {
 				long tmptime = (Long)e.getValue().getValue();
 				if (curtime - tmptime > checkInvalidTime) {
 					String taskid = e.getKey();
-					ret.add(item);
-					monitorQueue.remove(taskid);
+					if (worker.getNodeId().equals(item.node.getNodeId())) {
+						ret.add(item);
+						monitorQueue.remove(taskid);
+					}
 				}
 			}
 			worker.setLastCheckTaskTime(curtime);

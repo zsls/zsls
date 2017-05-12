@@ -336,7 +336,14 @@ public class InnerTrackService extends CompositeService implements InnerTrackerP
 		nodeLiveMonitor.receivedPing(new NodeIdInfo(id, request.getDomain()));
 		response.setNodeAction(NodeAction.NORMAL);
 		if (L.logger().isDebugEnabled()) {
-			L.debug(request.getDomain(), "receive heart beat from " + id);
+			List<TTaskId> runningTasks = request.getRunningTasks();
+			StringBuilder b = ThreadLocalBuffer.getLogBuilder(0);
+			b.append("receive heart beat from ").append(id).append(" [");
+			for (TTaskId t : runningTasks) {
+				b.append(t).append(",");
+			}
+			b.append("]");
+			L.debug(request.getDomain(), b.toString());
 		}
 		// dispatch event
 		DomainType dtype = context.getDomainManager().getDomainType(domain);
