@@ -161,9 +161,11 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			return rtJobEngines.get(domain);
 	}
 	
-	private void checkRunningTasks(String domain, DomainType dtype, JobEngine engine, 
+	private boolean checkRunningTasks(String domain, DomainType dtype, JobEngine engine, 
 			WorkNode node, List<TTaskId> tasks) {
 		List<TaskAssignInfo> missedTasks = collector.checkRunningTask(domain, node, tasks);
+		if (missedTasks.size() <= 0)
+			return false;
 		if (missedTasks.size() > 0) {
 			L.warn(domain, "collect " + missedTasks.size() + " tasks");
 			JobManager manager = LocalJobManager.getJobManager(domain, dtype);
@@ -179,6 +181,7 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 				}
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -190,8 +193,8 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 		case UPDATE_RUNNING:
 			WorkNode node = context.getNodeManager().getNode(domain, event.getNode().getNodeId());
 			JobEngine engine = dtype == DomainType.RT ? rtJobEngines.get(domain) : dtJobEngine;
-			checkRunningTasks(domain, dtype, engine, node, event.getTasks());
-			if (dmanager.getDomainStatus(domain) == DomainStatus.Running) {
+			boolean hasMissedTask = checkRunningTasks(domain, dtype, engine, node, event.getTasks());
+			if (hasMissedTask && dmanager.getDomainStatus(domain) == DomainStatus.Running) {
 				tryAssignTask(engine);
 			}
 			break;
@@ -411,13 +414,19 @@ public class TaskProcessor extends AbstractService implements EventHandler<TaskE
 			List<RTJobFlow> jobs = new LinkedList<RTJobFlow>();
 			boolean loadedAll = context.getJobStore().fetchJobs(domain, latestId,
 					jobs, engine.getLoadCapacity());
-			L.info(domain, "load " + jobs + " jobs from JobStore");
+			
+			StringBuilder b = ThreadLocalBuffer.getLogBuilder(0);
+			b.append("load [");
 			for (RTJobFlow unit : jobs) {
-				if (engine.feed(unit) == 0 && unit.isFinished()) {
-					L.info(domain, "load finished job: " + unit.getJobId());
+				b.append(unit.getJobId().toString());
+				if (engine.feed(unit) == 0 || unit.isFinished()) {
 					context.getJobStore().updateJob(domain, unit.getJobId(), RJobStat.Finished);
+					b.append("(Finished)");
 				}
+				b.append(",");
 			}
+			b.append("]");
+			L.info(domain, b.toString());
 			if (loadedAll) {
 				engine.setSync(true);
 				L.info(domain, "engine go into sync");

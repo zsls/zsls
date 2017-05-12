@@ -47,6 +47,8 @@ public class RTJobEngine extends JobEngine {
 	}
 
 	public int feed(JobFlow unit) {
+		if (unit.isFinished())
+			return 0;
 		RTJobFlow u = (RTJobFlow) unit;
 		// whether depend on previous units or not.
 		RTJobId preUnit = u.getPreUnit();
@@ -69,10 +71,10 @@ public class RTJobEngine extends JobEngine {
 			L.info(domain, "unit " + unit.getJobId() + " finished");
 			manager.unregister(unit);
 			List<JobFlow> units = relatedUnits.get(unit.getJobId());
+			cancelForbid((RTJobId)unit.getJobId());
 			if (units != null) {
 				for (JobFlow u : units) {
 					this.feed(u);
-					cancelForbid((RTJobId)u.getJobId());
 				}
 			}
 			relatedUnits.remove(unit.getJobId());
