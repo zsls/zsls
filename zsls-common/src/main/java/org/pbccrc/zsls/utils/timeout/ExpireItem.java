@@ -40,5 +40,11 @@ public class ExpireItem implements Comparable<ExpireItem> {
 		ExpireItem obj = (ExpireItem)o;
 		return item.equals(obj.item);
 	}
+	
+	public int hashCode() {
+		if (this.item == null)
+			return this.hashCode(); 
+		return this.item.hashCode();
+	}
 
 }

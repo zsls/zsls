@@ -168,8 +168,6 @@ class SqlTemplateImpl implements SqlTemplate {
             T res = executor.run(conn);
             conn.commit();
             return res;
-        } catch (Error e) {
-            throw rollback(conn, e);
         } catch (Exception e) {
             throw rollback(conn, e);
         } finally {

@@ -351,7 +351,7 @@ public class SQLFormatter {
     public static String format(String sql) {
         try {
             return new SQLFormatter(sql).format();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             return sql;
         }
     }

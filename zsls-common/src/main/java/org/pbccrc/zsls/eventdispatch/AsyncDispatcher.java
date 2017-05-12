@@ -160,7 +160,7 @@ public class AsyncDispatcher extends AbstractService implements Dispatcher {
       } else {
         throw new Exception("No handler for registered for " + type);
       }
-    } catch (Throwable t) {
+    } catch (Exception t) {
       //TODO Maybe log the state of the queue
       LOG.fatal("Error in dispatcher thread", t);
       // If serviceStop is called, we should exit this thread gracefully.
