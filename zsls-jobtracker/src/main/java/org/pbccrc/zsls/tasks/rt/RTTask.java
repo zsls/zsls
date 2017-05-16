@@ -113,7 +113,7 @@ public class RTTask extends Task implements ResultSerializable {
 	}
 	
 	public int hashCode() {
-		return this.hashCode(); 
+		return super.hashCode(); 
 	}
 	
 	public String toString() {
