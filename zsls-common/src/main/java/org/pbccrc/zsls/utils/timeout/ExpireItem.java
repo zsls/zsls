@@ -43,7 +43,7 @@ public class ExpireItem implements Comparable<ExpireItem> {
 	
 	public int hashCode() {
 		if (this.item == null)
-			return this.hashCode(); 
+			return super.hashCode(); 
 		return this.item.hashCode();
 	}
 
