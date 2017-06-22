@@ -113,7 +113,13 @@
 			<ul class="pagination" id="paginationParams" {% if totalPage == 0 %} style="display:none;" {% end %}>
 			    <li {% if int(curPage) == 1 %} class="disabled" {% end %}><a href="javascript:void(0)" onclick="switchPage({{curPage}}, -1)">&laquo;</a></li>
 			    {% for i in range(1, totalPage + 1) %}
-			    <li {% if int(curPage) == i %} class="active" {% end %}> <a href="javascript:void(0)" onclick="switchPage(null, {{i}})">{{i}}</a></li>
+			    <li {% if int(curPage) == i %} class="active" {% end %}> 
+			    	{% if int(curPage) >= i - 5 %} 
+			    		{% if int(curPage) <= i + 5 %}
+			    			<a href="javascript:void(0)" onclick="switchPage(null, {{i}})">{{i}}</a>
+			    		{% end %}
+			    	{% end %}
+			    </li>
 			    {% end %}
 			    <li {% if int(curPage) == int(totalPage) %} class="disabled" {% end %}><a href="javascript:void(0)" onclick="switchPage({{curPage}}, 1)">&raquo;</a></li>
 			</ul>
@@ -142,6 +148,7 @@
 			<div class="modal-body">
 				Parameters <textarea id="parameters" readonly="readonly" class="form-control" rows="4"></textarea>
 				ResultMsg <textarea id="resultMsg" readonly="readonly" class="form-control" rows="4"></textarea>
+				FeedbackMsg <textarea id="feedbackMsg" readonly="readonly" class="form-control" rows="4"></textarea>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default btn-xs" data-dismiss="modal">
@@ -176,8 +183,10 @@
 		var link = $(e.relatedTarget);
 		var parameters = link.attr("parameters");
 		var resultMsg = link.attr("resultMessage");
+		var feedbackMsg = link.attr("feedbackMessage");
 		$("#parameters").val(parameters);
 		$("#resultMsg").val(resultMsg);
+		$("#feedbackMsg").val(feedbackMsg);
 	});
 	$("#taskDetail").on("hidden.bs.modal", function(e) {
 		//$("#taskDetail .modal-body").html("");
@@ -206,9 +215,10 @@
 			return input.substr(0, 4) + "-" + input.substr(4, 2) + "-" + input.substr(6, 2);
 		}
 	};
-	function showtaskdetail(feedback, parameters) {
+	function showtaskdetail(result, feedback, parameters) {
 		$("#parameters").val(parameters);
-		$("#resultMsg").val(feedback);
+		$("#resultMsg").val(result);
+		$("#feedbackMsg").val(feedback);
 		$("#taskDetail").modal('show');
 		
 	};

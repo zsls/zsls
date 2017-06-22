@@ -59,7 +59,7 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 	public static final String COL_TASK_UID = "UNITID";
 	public static final String COL_TASK_STATUS = "STATUS";
 	public static final String COL_TASK_ASSIGNCOUNT = "CNT";
-	public static final String COL_TASK_FEEDBACK = "INFO";
+	public static final String COL_TASK_INFO = "INFO";
 	
 	public static final String COL_UNIT_ID = "ID";
 	public static final String COL_UNIT_STATUS = "STATUS";
@@ -169,7 +169,8 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 		if (r != null && r.feedback != null) {
 			if (r.feedback.length() > 2048)
 				r.feedback = r.feedback.substring(0, 2048);
-			sql.set(COL_TASK_FEEDBACK, r.feedback);
+			String info = JsonSerilizer.serilize(r);
+			sql.set(COL_TASK_INFO, info);
 		}
 		sql.where(COL_TASK_ID + " = ?", task.id);
 		int ret = sql.doUpdate();
@@ -313,7 +314,7 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 	protected Map<String, RTTask> fetchTasksByUnit(String domain, RTJobId id) {
 		Map<String, RTTask> uList = new SelectSql(getSqlTemplate())
 					.select()
-					.columns(COL_TASK_ID, COL_TASK_STATUS, COL_TASK_FEEDBACK, COL_TASK_ASSIGNCOUNT)
+					.columns(COL_TASK_ID, COL_TASK_STATUS, COL_TASK_INFO, COL_TASK_ASSIGNCOUNT)
 					.from()
 					.table(getTaskTable(domain))
 					.where(COL_TASK_UID + " = ? ", id.getId())
@@ -444,12 +445,14 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 	public boolean updateTaskResult(String jobId, String taskId, Date date, TaskResult ret) {
 		TaskStat stat = ret.getAction() == TaskAction.COMPLETE ? TaskStat.Finished : TaskStat.Fail;
 		Transaction trans = TransactionFactory.getTransaction();
+		ExecuteResult er = new ExecuteResult(ret.getKeyMessage(), ret.getAppendInfo());
+		String erJson = JsonSerilizer.serilize(er);
 		int num = new UpdateSql(getSqlTemplate())
 				.inTransition(trans)
 				.update()
 				.table(TBLNAME_QTASK)
 				.set(COL_QT_STAT, stat.getVal())
-				.set(COL_QT_RESULT, ret.getKeyMessage())
+				.set(COL_QT_RESULT, erJson)
 				.where(COL_QT_ID + " = ?", taskId)
 				.and(COL_QT_EXETIME + " = ?", transformTime(date))
 				.doUpdate();
@@ -493,8 +496,11 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 				.single(new QuartzHandler());
 		for (ServerQuartzJob job : tmp) {
 			Map<String, String> meta = this.fetchRuntimeParams(job.getJobId());
-			for (String taskId : meta.keySet()) {
-				String val = meta.get(taskId);
+			Iterator<Map.Entry<String, String>> it = meta.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				String taskId = entry.getKey();
+				String val = entry.getValue();
 				if (val != null && !val.isEmpty()) {
 					try {
 						@SuppressWarnings("unchecked")

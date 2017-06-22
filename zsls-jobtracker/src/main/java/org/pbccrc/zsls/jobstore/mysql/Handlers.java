@@ -17,6 +17,7 @@ import org.pbccrc.zsls.api.quartz.CronQuartzTrigger;
 import org.pbccrc.zsls.api.quartz.QuartzTrigger;
 import org.pbccrc.zsls.api.quartz.QuartzTrigger.TriggerType;
 import org.pbccrc.zsls.api.quartz.SimpleQuartzTrigger;
+import org.pbccrc.zsls.jobengine.Task.ExecuteResult;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
 import org.pbccrc.zsls.jobstore.JdbcJobStore;
 import org.pbccrc.zsls.store.jdbc.utils.ResultSetHandler;
@@ -72,8 +73,10 @@ public class Handlers {
 			while (rs.next()) {
 				String taskId = rs.getString(JdbcJobStore.COL_QT_ID);
 				SimpleTaskInfo task = new SimpleTaskInfo();
-				task.statValue =  (int)rs.getLong(JdbcJobStore.COL_QT_STAT);;
-				task.keymessage = rs.getString(JdbcJobStore.COL_QT_RESULT);
+				task.statValue =  (int)rs.getLong(JdbcJobStore.COL_QT_STAT);
+				ExecuteResult er = JsonSerilizer.deserilize(rs.getString(JdbcJobStore.COL_QT_RESULT), ExecuteResult.class);
+				task.feedback = er.feedback;
+				task.keymessage = er.keymessage;
 				result.put(taskId, task);
 			}
 			return result;
@@ -151,7 +154,9 @@ public class Handlers {
 				TaskStat stat = TaskStat.getInstance(rs.getInt(JdbcJobStore.COL_TASK_STATUS));
 				RTTask task = new RTTask(taskId, null);
 				task.markStatus(stat);
-				task.updateExecuteResult(null, rs.getString(JdbcJobStore.COL_TASK_FEEDBACK));
+				String info = rs.getString(JdbcJobStore.COL_TASK_INFO);
+				ExecuteResult rt = JsonSerilizer.deserilize(info, ExecuteResult.class);
+				task.updateExecuteResult(rt.keymessage, rt.feedback);
 				uList.put(taskId, task);
 			}
 			return uList;
