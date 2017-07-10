@@ -25,6 +25,7 @@ import org.pbccrc.zsls.tasks.dt.ServerQuartzJob;
 import org.pbccrc.zsls.tasks.dt.ServerQuartzJob.QJobStat;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow.RJobStat;
+import org.pbccrc.zsls.tasks.rt.RTJobId;
 import org.pbccrc.zsls.tasks.rt.RTTask;
 import org.pbccrc.zsls.utils.JsonSerilizer;
 import org.pbccrc.zsls.utils.TaskUtil;
@@ -133,12 +134,18 @@ public class Handlers {
 			List<RTJobFlow> sList = new LinkedList<RTJobFlow>();
 			while (rs.next()) {
 				long id = rs.getLong(JdbcJobStore.COL_UNIT_ID);
-				IScheduleUnit iS = JsonSerilizer.deserilize(rs.getString(JdbcJobStore.COL_UNIT_CONTENT), IScheduleUnit.class);
-				RTJobFlow unit = TaskUtil.parseJobUnit(iS);
+				//IScheduleUnit iS = JsonSerilizer.deserilize(rs.getString(JdbcJobStore.COL_UNIT_CONTENT), IScheduleUnit.class);
+				//RTJobFlow unit = TaskUtil.parseJobUnit(iS);
+				RTJobFlow unit = new RTJobFlow();
+				Date date = rs.getDate(JdbcJobStore.COL_UNIT_CTIME);
+				unit.setUnitId(id);
+				unit.setGenerateTime(date);
+				long preUnitId = rs.getLong(JdbcJobStore.COL_UNIT_PREUNIT);
+				unit.setPreUnit(preUnitId > 0 ? new RTJobId(preUnitId) : null);
 				int stat = rs.getInt(JdbcJobStore.COL_UNIT_STATUS);
 				if (stat == RJobStat.Finished.getVal())
 					unit.markJobFinish(true);
-				unit.updateUnitIdForAllTasks(id);
+				//unit.updateUnitIdForAllTasks(id);
 				sList.add(unit);
 			}
 			return sList;

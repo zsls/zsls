@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class ResultNode extends Result {
 	public static final String DOMAIN		= "domain";
+	public static final String UNIT_ID		= "unitId";
 	public static final String TIME		= "createtime";
 	public static final String STAT 		= "stat";
 	public static final String TASK_ID	= "taskId";
@@ -13,7 +14,10 @@ public class ResultNode extends Result {
 	public static final String EXETIME = "exetime";
 	public static final String EXPRESSION = "expression";
 	public static final String RESULT_MESSAGE = "resultMessage";
+	public static final String FEEDBACK_MESSAGE = "feedbackMessage";
 	public static final String PARAMETERS = "parameters";
+	public static final String RECORDS_NUM = "recordsNum";
+	public static final String PREUNIT = "preUnit";
 	
 	private Map<String, Object> map;
 	
@@ -88,6 +92,15 @@ public class ResultNode extends Result {
 		return o == null ? null : o.toString();
 	}
 	
+	public void setFeedbackMsg(String message) {
+		map.put(FEEDBACK_MESSAGE, message);
+	}
+	
+	public String getFeedbackMsg() {
+		Object o = map.get(FEEDBACK_MESSAGE);
+		return o == null ? null : o.toString();
+	}
+	
 	public void addChild(String key, Result val) {
 		map.put(key, val.data());
 	}
@@ -96,4 +109,30 @@ public class ResultNode extends Result {
 		map.put(key, val);
 	}
 	
+	public void setRecordsNum(long recordsNum) {
+		map.put(RECORDS_NUM, recordsNum);
+	}
+	
+	public long getRecordsNum() {
+		Object o = map.get(RECORDS_NUM);
+		return o == null ? null : (Long)o;
+	}
+	
+	public void setPreUnit(String preUnit) {
+		map.put(PREUNIT, preUnit);
+	}
+	
+	public String getPreUnit() {
+		Object o = map.get(PREUNIT);
+		return o == null ? null : (String)o;
+	}
+	
+	public void setUnits(Result val) {
+		map.put(UNITS, val.data());
+	}
+	
+	public Result getUnits() {
+		Object o = map.get(UNITS);
+		return o == null ? null : (Result)o;
+	}
 }

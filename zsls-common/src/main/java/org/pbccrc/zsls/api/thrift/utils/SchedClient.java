@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -129,8 +130,13 @@ public class SchedClient {
 		else {
 			method = new PostMethod();
 			method.setRequestHeader(CONTENT_TYPE_KEY, CONTENT_TYPE_VAL);
-			for(String key : params.keySet())
-				((PostMethod)method).addParameter(key, params.get(key));
+			Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				String key = entry.getKey();
+				String value = entry.getValue();
+				((PostMethod)method).addParameter(key, value);
+			}
 		}
 		InnerSchedResult ret = null;
 		

@@ -23,6 +23,9 @@ public class UserRequest {
 	public static final String PARAM_TRIGGER		= "trigger";
 	public static final String PARAM_JOBTYPE      = "jobtype";
 	public static final String PARAM_CMD			= "cmd";
+	// scale of fetching data from database
+	public static final String PARAM_START		= "start";
+	public static final String PARAM_END		= "end";
 	
 	// for RT domains
 	public static final String PARAM_VAL_START	= "startDomain";
@@ -189,6 +192,21 @@ public class UserRequest {
 	public String getCmd() {
 		return cmd;
 	}
+	int start;
+	public int getStart() {
+		return start;
+	}
+	public void setDefaultStart() {
+		if (this.start < 0)
+			this.start = 0;
+	}
+	int end;
+	public int getEnd() {
+		return end;
+	}
+	public void setDefaultEnd() {
+		this.end = getStart() + 20;
+	}
 	
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -237,6 +255,15 @@ public class UserRequest {
 			else if (request.queryType == QueryType.DisableNodeQuery) {
 				request.node = JsonSerilizer.deserilize(request.getQuery(), NodeId.class);
 			}	
+			else if (request.queryType == QueryType.SchedStatQuery && request.subType == SubType.Task) {
+				try {
+				request.start = Integer.valueOf(httpMessage.getParameter(PARAM_START));
+				request.end = Integer.valueOf(httpMessage.getParameter(PARAM_END));
+				} catch (NumberFormatException ne) {
+					request.setDefaultStart();
+					request.setDefaultEnd();
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -432,7 +432,7 @@ public class RequestManager extends CompositeService implements
 				if (userRequest.jobType == JobType.DT)
 					result = queryHelper.queryUnits();
 				else
-					result = queryHelper.queryUnitByDate(userRequest.getDomain(), userRequest.getTime());
+					result = queryHelper.queryUnitByDate(userRequest.getDomain(), userRequest.getTime(), userRequest.getStart(), userRequest.getEnd());
 				break;
 			case Unit:
 				if (userRequest.jobType == JobType.DT)

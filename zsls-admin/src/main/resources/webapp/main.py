@@ -106,13 +106,15 @@ class TaskStatHandler(tornado.web.RequestHandler):
                                 urllib.urlencode({"type": _type, "domain": _domain, "subtype": _subtype, "jobtype": _jobtype}))
             _dict = json.loads(response.body)
             if _dict["retCode"] == "OK":
-                units = json.loads(_dict["info"])
+                _result = json.loads(_dict["info"])
+                units = _result["units"]
         else:
             response = client.fetch(server_addr + \
                                 urllib.urlencode({"type": _type, "subtype": _subtype, "jobtype": _jobtype}))
             _dict = json.loads(response.body)
             if _dict["retCode"] == "OK":
-                units = json.loads(_dict["info"])
+                _result = json.loads(_dict["info"])
+                units = _result["units"]
         if _jobtype == "dt":
             try:
                 self.render('dt' + os.path.sep + 'tasks.html', units = units)

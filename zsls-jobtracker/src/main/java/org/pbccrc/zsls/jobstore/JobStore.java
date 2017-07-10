@@ -53,14 +53,15 @@ public interface JobStore {
 	boolean fetchJobs(String domain, RTJobId id, List<RTJobFlow> result, int taskLimit);
 	
 	/* 根据日期读取作业 */
-	List<RTJobFlow> fetchUnitsByDate(String domain, Date date);
+	List<RTJobFlow> fetchUnitsByDate(String domain, Date date, int start, int end);
 	
 	/* 获取第一个未完成的作业ID */
 	RTJobId getFirstUnfinishedUnit(String domain);
 	
 	/* 获取最后一个作业的id */
 	RTJobId getLastUnit(String domain);
-	
+	/* 获取指定域的作业数量 */
+	long fetchJobsNum(String domain);
 	
 	
 	/*********------------------- 定时任务 --------------------********/

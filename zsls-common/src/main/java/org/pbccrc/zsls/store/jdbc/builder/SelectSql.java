@@ -118,7 +118,7 @@ public class SelectSql {
         curOrderByColumnSize = 0;
         return this;
     }
-
+    
     public SelectSql column(String column, OrderByType order) {
 
         if (!StringUtils.hasText(column) || order == null) {
@@ -319,4 +319,5 @@ public class SelectSql {
     	sql.append(" last_insert_id() ");
     	return this;
     }
+    
 }

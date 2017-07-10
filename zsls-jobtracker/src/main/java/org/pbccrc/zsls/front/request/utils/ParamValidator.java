@@ -115,6 +115,10 @@ public class ParamValidator {
 				String time = userRequest.getTime();
 				if (time != null && !DateUtils.checkDateValid(time))
 					markInvalid(ret, "invalid time");
+				if (userRequest.getStart() >= userRequest.getEnd()) {
+					userRequest.setDefaultStart();
+					userRequest.setDefaultEnd();
+				}
 			}
 			else if (subtype == SubType.Unit && (userRequest.getUnitId() == null
 					|| (jobType == JobType.RT && RTJobId.fromString(userRequest.getUnitId()) == null))) {

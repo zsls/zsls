@@ -112,20 +112,25 @@ public class QueryHelper {
 		}
 	}
 	
-	public Result queryUnitByDate(String domain, String time) throws SchedException {
+	public Result queryUnitByDate(String domain, String time, int start, int end) throws SchedException {
 		Date date = null;
 		try {
 			date = time == null ? null : DateUtils.getDate(time);
-			List<RTJobFlow> sList = context.getJobStore().fetchUnitsByDate(domain, date);
+			List<RTJobFlow> sList = context.getJobStore().fetchUnitsByDate(domain, date, start, end);
+			long recordsNum = context.getJobStore().fetchJobsNum(domain);
 			ResultNode result = new ResultNode();
+			ResultNode units = new ResultNode();
 			for (RTJobFlow u : sList) {
 				ResultNode unitR = new ResultNode();
-				result.addChild(u.getJobId().toString(), unitR);
+				units.addChild(u.getJobId().toString(), unitR);
 				String unitStat = u.isFinished() ? "FINISH" : "INITIAL";
 				unitR.setStatus(unitStat);
-				unitR.setCreatetime(null);
+				unitR.setCreatetime(u.getGenerateTime().toString());
+				unitR.setPreUnit(u.getPreUnit() == null ? null : u.getPreUnit().toString());
 				unitR.setDomain(domain);
 			}
+			result.setUnits(units);
+			result.setRecordsNum(recordsNum);
 			return result;
 		} catch (Exception e) {
 			throw new SchedException(e);
@@ -147,8 +152,10 @@ public class QueryHelper {
 					ResultNode rNode = new ResultNode();
 					rNode.setDomain(task.getDomain());
 					rNode.setStatus(task.getStatus().name());
-					if (task.getResultMsg() != null)
-						rNode.setResultMsg(task.getResultMsg().feedback);
+					if (task.getResultMsg() != null) {
+						rNode.setResultMsg(task.getResultMsg().keymessage);
+						rNode.setFeedbackMsg(task.getResultMsg().feedback);
+					}
 					result.addChild(task.getTaskId(), rNode);
 				}
 			}
@@ -176,7 +183,8 @@ public class QueryHelper {
 					stat = memTask.getStatus();
 				task.addParam(ResultNode.STAT, stat);
 				task.addParam(ResultNode.PARAMETERS, t.getParams()== null ? "" : JsonSerilizer.serilize(t.getParams()));
-				task.addParam(ResultNode.RESULT_MESSAGE, t.getResultMsg() == null ? "": t.getResultMsg().feedback);
+				task.addParam(ResultNode.RESULT_MESSAGE, t.getResultMsg() == null ? "" : t.getResultMsg().keymessage);
+				task.addParam(ResultNode.FEEDBACK_MESSAGE, t.getResultMsg() == null ? "" : t.getResultMsg().feedback);
 				list.addElement(task.data());
 			}
 			return result;
@@ -189,8 +197,11 @@ public class QueryHelper {
 		try {
 			ResultNode result = new ResultNode();
 			Map<String, DomainInfo> infos = context.getDomainManager().getDTDomainInfos();
-			for (String domain : infos.keySet()) {
-				DomainInfo info = infos.get(domain);
+			Iterator<Map.Entry<String, DomainInfo>> it = infos.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, DomainInfo> entry = it.next();
+				String domain = entry.getKey();
+				DomainInfo info = entry.getValue();
 				result.addParam(domain, info.status);
 			}
 			return result;
@@ -203,8 +214,11 @@ public class QueryHelper {
 		try {
 			ResultNode result = new ResultNode();
 			Map<String, DomainInfo> infos = context.getDomainManager().getRTDomainInfos();
-			for (String domain : infos.keySet()) {
-				DomainInfo info = infos.get(domain);
+			Iterator<Map.Entry<String, DomainInfo>> it = infos.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, DomainInfo> entry = it.next();
+				String domain = entry.getKey();
+				DomainInfo info = entry.getValue();
 				result.addParam(domain, info.status);
 			}
 			return result;

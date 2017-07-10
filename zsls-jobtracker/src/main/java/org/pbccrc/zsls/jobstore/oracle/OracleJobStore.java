@@ -14,6 +14,7 @@ import org.pbccrc.zsls.store.jdbc.Transaction;
 import org.pbccrc.zsls.store.jdbc.TransactionFactory;
 import org.pbccrc.zsls.store.jdbc.builder.DropTableSql;
 import org.pbccrc.zsls.store.jdbc.builder.InsertSql;
+import org.pbccrc.zsls.store.jdbc.builder.OrderByType;
 import org.pbccrc.zsls.store.jdbc.builder.SelectSql;
 import org.pbccrc.zsls.tasks.rt.RTJobFlow;
 import org.pbccrc.zsls.tasks.rt.RTJobId;
@@ -28,6 +29,9 @@ public class OracleJobStore extends JdbcJobStore {
 	final String ORACLE_ALL_SEQUENCE = "All_Sequences";
 	final String ORACLE_USER_TABLES = "USER_TABLES";
 	final String ORACLE_TABLE_NAME = "TABLE_NAME";
+	
+	final String ORACLE_ROWNUM = "ROWNUM";
+	final String ORACLE_ROWNUM_ALIAS = "RN_ALIAS";
 	
 	private NumberHandler numberHandler = new NumberHandler();
 	
@@ -196,6 +200,34 @@ public class OracleJobStore extends JdbcJobStore {
 		} catch (SQLException e) {
 			throw new JdbcException(e);
 		}
+	}
+
+	@Override
+	protected SelectSql limitResultSet(String sql, int start, int end) {
+		SelectSql sql_limit = new SelectSql(getSqlTemplate())
+				.select()
+				.all()
+				.from()
+				.table(" ( " + sql + " ) t ")
+				.where()
+				.between(ORACLE_ROWNUM_ALIAS, start, end);
+		return sql_limit;
+	}
+
+	@Override
+	public List<RTJobFlow> fetchUnitsByDate(String domain, Date date, int start, int end) {
+		String table = getUnitTable(domain);
+		SelectSql sql = new SelectSql(getSqlTemplate())
+					.select()
+					.columns(table + ".*", ORACLE_ROWNUM + " " + ORACLE_ROWNUM_ALIAS)
+					.from()
+					.table(table);
+		
+		sql = date != null ? sqlSelectWhereDateMatch(sql, date) : sql;
+		sql.orderBy().column(COL_UNIT_ID, OrderByType.DESC);
+		sql = limitResultSet(sql.getSQL(), start, end);
+		List<RTJobFlow> uList = sql.list(new BatchUnitHandler());
+		return uList;
 	}
 	
 }

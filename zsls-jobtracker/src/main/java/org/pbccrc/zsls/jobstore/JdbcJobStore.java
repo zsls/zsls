@@ -23,7 +23,6 @@ import org.pbccrc.zsls.jobengine.Task;
 import org.pbccrc.zsls.jobengine.Task.ExecuteResult;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
 import org.pbccrc.zsls.jobstore.mysql.Handlers.BatchTaskHandler;
-import org.pbccrc.zsls.jobstore.mysql.Handlers.BatchUnitHandler;
 import org.pbccrc.zsls.jobstore.mysql.Handlers.NumberHandler;
 import org.pbccrc.zsls.jobstore.mysql.Handlers.QuartzHandler;
 import org.pbccrc.zsls.jobstore.mysql.Handlers.QuartzTasksStatHandler;
@@ -250,23 +249,22 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 	}
 	
 	@Override
-	public List<RTJobFlow> fetchUnitsByDate(String domain, Date date) {
-		SelectSql sql = new SelectSql(getSqlTemplate())
-					.select()
-					.all()
-					.from()
-					.table(getUnitTable(domain));
-		
-		sql = date != null ? sqlSelectWhereDateMatch(sql, date) : sql;
-		
-		List<RTJobFlow> uList = sql.list(new BatchUnitHandler());
-		// update task status
-		for (RTJobFlow u: uList)
-			this.updateTaskStatusForUnit(domain, u);
-		return uList;
-	}
+	public abstract List<RTJobFlow> fetchUnitsByDate(String domain, Date date, int start, int end);
+	
+	protected abstract SelectSql limitResultSet(String sql, int start, int end); 
 	
 	protected abstract SelectSql sqlSelectWhereDateMatch(SelectSql sql, Date date);
+	
+	@Override
+	public long fetchJobsNum(String domain) {
+		SelectSql sql = new SelectSql(getSqlTemplate())
+				.select()
+				.columns("COUNT(*)")
+				.from()
+				.table(getUnitTable(domain));
+		Object jobsNum = sql.single();
+		return (Long)jobsNum;
+	}
 	
 	@Override
 	public boolean isJobFinish(String domain, RTJobId id) {

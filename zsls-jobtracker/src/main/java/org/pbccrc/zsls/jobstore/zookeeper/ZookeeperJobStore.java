@@ -391,7 +391,7 @@ public class ZookeeperJobStore implements JobStore {
 	}
 
 	@Override
-	public List<RTJobFlow> fetchUnitsByDate(String domain, Date date) {
+	public List<RTJobFlow> fetchUnitsByDate(String domain, Date date, int start, int end) {
 		return null;
 	}
 	private void init() throws Exception {
@@ -504,6 +504,12 @@ public class ZookeeperJobStore implements JobStore {
 	public boolean fetchJobs(String domain, RTJobId id, List<RTJobFlow> result, int taskLimit) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public long fetchJobsNum(String domain) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
