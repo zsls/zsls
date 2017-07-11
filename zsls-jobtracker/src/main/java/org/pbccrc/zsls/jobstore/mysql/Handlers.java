@@ -163,7 +163,8 @@ public class Handlers {
 				task.markStatus(stat);
 				String info = rs.getString(JdbcJobStore.COL_TASK_INFO);
 				ExecuteResult rt = JsonSerilizer.deserilize(info, ExecuteResult.class);
-				task.updateExecuteResult(rt.keymessage, rt.feedback);
+				if (rt != null)
+					task.updateExecuteResult(rt.keymessage, rt.feedback);
 				uList.put(taskId, task);
 			}
 			return uList;
