@@ -117,7 +117,7 @@ public class QueryHelper {
 		try {
 			date = time == null ? null : DateUtils.getDate(time);
 			List<RTJobFlow> sList = context.getJobStore().fetchUnitsByDate(domain, date, start, end);
-			long recordsNum = context.getJobStore().fetchJobsNum(domain);
+			long recordsNum = context.getJobStore().fetchJobsNum(domain, date);
 			ResultNode result = new ResultNode();
 			ResultNode units = new ResultNode();
 			for (RTJobFlow u : sList) {

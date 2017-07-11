@@ -507,7 +507,7 @@ public class ZookeeperJobStore implements JobStore {
 	}
 
 	@Override
-	public long fetchJobsNum(String domain) {
+	public long fetchJobsNum(String domain, Date date) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

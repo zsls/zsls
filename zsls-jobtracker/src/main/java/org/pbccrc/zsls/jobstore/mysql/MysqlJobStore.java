@@ -1,6 +1,7 @@
 package org.pbccrc.zsls.jobstore.mysql;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -152,7 +153,12 @@ public class MysqlJobStore extends JdbcJobStore {
 				
 	sql = date != null ? sqlSelectWhereDateMatch(sql, date) : sql;
 	sql.orderBy().column(COL_UNIT_ID, OrderByType.DESC);
-	sql = limitResultSet(sql.getSQL(), start, end);
+	SimpleDateFormat sd = new SimpleDateFormat("YYYY-MM-dd");
+	
+	String _sql = sql.getSQL();
+	if (_sql.contains("?"))
+		_sql = _sql.replaceFirst("\\?", "'" + sd.format(date) + "'");
+	sql = limitResultSet(_sql, start, end);
 	List<RTJobFlow> uList = sql.list(new BatchUnitHandler());
 	
 	return uList;

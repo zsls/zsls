@@ -1,7 +1,9 @@
 package org.pbccrc.zsls.jobstore.zookeeper;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -108,10 +110,11 @@ public class JobStoreZkUtils {
 			domainshardIdShardNodeCache.put(domain, shardIdNodes);
 			return "shard0";
 		}
-		Set<String> keySet =  shardIdNodes.keySet();
+		Iterator<Map.Entry<String, ShardNode>> it = shardIdNodes.entrySet().iterator();
 		ShardNode availableShardNode = null;
-		for (String k : keySet) {
-			availableShardNode = shardIdNodes.get(k);
+		while (it.hasNext()) {
+			Map.Entry<String, ShardNode> entry = it.next();
+			availableShardNode = entry.getValue();
 			if(availableShardNode.getUnitSize() < shardCapacity) {
 //				availableShardNode.setId(k);
 				break;
@@ -169,10 +172,11 @@ public class JobStoreZkUtils {
 	}
 	public long getMaxIdUnit(String domain) {
 		HashMap<String, ShardNode> shardIdShardNodes = domainshardIdShardNodeCache.get(domain);
-		Set<String> shardIdSet = shardIdShardNodes.keySet();
+		Iterator<Map.Entry<String, ShardNode>> it = shardIdShardNodes.entrySet().iterator();
 		long maxUnitID = -1;
-		for (String shard : shardIdSet) {
-			ShardNode shardNode = shardIdShardNodes.get(shard);
+		while (it.hasNext()) {
+			Map.Entry<String, ShardNode> entry = it.next();
+			ShardNode shardNode = entry.getValue();
 			long currentMax = shardNode.getMaxUnitID();
 			if (currentMax > maxUnitID) {
 				maxUnitID = currentMax;
@@ -211,12 +215,17 @@ public class JobStoreZkUtils {
 			}
 			//2.以上代码读取了到shard层的数据
 			//接下来读取scheduleunit层的数据
-			for (String domain : domainUnitIdShardNodeCache.keySet()) {
+			Iterator<Map.Entry<String, HashMap<String, ShardNode>>> it = domainUnitIdShardNodeCache.entrySet().iterator(); 
+			while (it.hasNext()) {
 				
-				Set<String> shardIdSet = domainshardIdShardNodeCache.get(domain).keySet();
-				for (String shardId : shardIdSet) {
+				Map.Entry<String, HashMap<String, ShardNode>> entry = it.next();
+				Iterator<Map.Entry<String, ShardNode>> iterator = entry.getValue().entrySet().iterator();
+				String domain = entry.getKey();
+				while (iterator.hasNext()) {
+					Map.Entry<String, ShardNode> e = iterator.next();
+					String shardId = e.getKey();
 					String shardBase = zslsBase + "/" + domain+"/"+shardId;
-					ShardNode shardNode = domainshardIdShardNodeCache.get(domain).get(shardId);
+					ShardNode shardNode = e.getValue();
 					
 					List<String> units = zkClient.getChildren().forPath(shardBase);
 					for (int i = 0; i < units.size(); i++) {

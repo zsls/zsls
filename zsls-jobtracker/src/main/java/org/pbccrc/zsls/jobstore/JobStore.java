@@ -61,7 +61,7 @@ public interface JobStore {
 	/* 获取最后一个作业的id */
 	RTJobId getLastUnit(String domain);
 	/* 获取指定域的作业数量 */
-	long fetchJobsNum(String domain);
+	long fetchJobsNum(String domain, Date date);
 	
 	
 	/*********------------------- 定时任务 --------------------********/

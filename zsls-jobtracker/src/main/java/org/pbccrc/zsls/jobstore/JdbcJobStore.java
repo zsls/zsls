@@ -256,12 +256,13 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 	protected abstract SelectSql sqlSelectWhereDateMatch(SelectSql sql, Date date);
 	
 	@Override
-	public long fetchJobsNum(String domain) {
+	public long fetchJobsNum(String domain, Date date) {
 		SelectSql sql = new SelectSql(getSqlTemplate())
 				.select()
 				.columns("COUNT(*)")
 				.from()
 				.table(getUnitTable(domain));
+		sql = date == null ? sql : sqlSelectWhereDateMatch(sql, date);
 		Object jobsNum = sql.single();
 		return (Long)jobsNum;
 	}
