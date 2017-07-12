@@ -96,6 +96,7 @@ class TaskStatHandler(tornado.web.RequestHandler):
         _totalPage = self.get_argument("totalPage", 0)
         _subtype = "task"
         units = {}
+        recordsNum = 0
         if _domain is not None:
             if _time is not None and _time != '':
                 _time = _time.replace("-", "")
@@ -103,18 +104,21 @@ class TaskStatHandler(tornado.web.RequestHandler):
                                 urllib.urlencode({"type": _type, "domain": _domain, "subtype": _subtype, "time": _time, "jobtype": _jobtype}))
             else :
                 response = client.fetch(server_addr + \
-                                urllib.urlencode({"type": _type, "domain": _domain, "subtype": _subtype, "jobtype": _jobtype}))
+                                urllib.urlencode({"type": _type, "domain": _domain, "subtype": _subtype, "jobtype": _jobtype, "start": (int(_curPage) - 1) * _sizePerPage, "end":int(_curPage)*_sizePerPage}))
             _dict = json.loads(response.body)
             if _dict["retCode"] == "OK":
                 _result = json.loads(_dict["info"])
                 units = _result["units"]
+                recordsNum = _result["recordsNum"]
         else:
             response = client.fetch(server_addr + \
-                                urllib.urlencode({"type": _type, "subtype": _subtype, "jobtype": _jobtype}))
+                                urllib.urlencode({"type": _type, "subtype": _subtype, "jobtype": _jobtype, "start": (int(_curPage) - 1) * _sizePerPage, "end":int(_curPage)*_sizePerPage}))
             _dict = json.loads(response.body)
             if _dict["retCode"] == "OK":
                 _result = json.loads(_dict["info"])
                 units = _result["units"]
+                recordsNum = _result["recordsNum"]
+                
         if _jobtype == "dt":
             try:
                 self.render('dt' + os.path.sep + 'tasks.html', units = units)
@@ -123,16 +127,16 @@ class TaskStatHandler(tornado.web.RequestHandler):
                 self.render_string("dt" + os.path.sep + "error.html", info = units)
         else:
             try:
+                print recordsNum
                 us = sortDict(units)
                 if (len(us) > 0) :
-                    _totalPage = len(us) / _sizePerPage + 1
+                    _totalPage = int(recordsNum) / _sizePerPage + 1
                 start = (int(_curPage) - 1) * _sizePerPage
-                self.render('rt' + os.path.sep + 'tasks.html', domains = domains, units = us[start : start + _sizePerPage],
+                self.render('rt' + os.path.sep + 'tasks.html', domains = domains, units = us,
                         curdomain = _domain, curtime = _time, curPage = _curPage, totalPage = _totalPage)
             except Exception, e:
                 print e
                 self.render_string("rt" + os.path.sep + "error.html", info = units)
-        
 class UnitTaskHandler(tornado.web.RequestHandler):
     def get(self, data = None):
         _jobtype = self.get_argument("jobtype", None)
