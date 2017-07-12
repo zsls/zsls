@@ -68,7 +68,7 @@ def sortRTTask(list):
     return t
 def sortDict(dict):
     #split like unitXXX
-    t = sorted(dict.items(), lambda x, y : comp(x[0][4:], y[0][4:]), reverse=False)
+    t = sorted(dict.items(), lambda x, y : comp(x[0][4:], y[0][4:]), reverse=True)
     return t
 def comp(x, y):
     x = int(x)

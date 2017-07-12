@@ -89,6 +89,9 @@
 							提交时间
 						</th>
 						<th>
+						           依赖
+						</th>
+						<th>
 							任务信息
 						</th>
 					</tr>
@@ -107,12 +110,18 @@
 							{{unit[1]['createtime']}}
 						</td>
 						<td>
+						{% if "preUnit" in unit[1] %}
+						{{unit[1]['preUnit']}}
+					    {% end %}
+						</td>
+						<td>
 							<button class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal" url="/unittask"
 									unitid="{{unit[0]}}" domain="{{unit[1]['domain']}}" data-remote="false">
 							   <span class="glyphicon glyphicon-th-list"></span>
 							</button>
 						</td>
 					</tr>
+					
 					{% end %}
 				</tbody>
 			</table>
