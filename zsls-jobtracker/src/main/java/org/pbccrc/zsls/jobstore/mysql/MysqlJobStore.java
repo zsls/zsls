@@ -139,7 +139,7 @@ public class MysqlJobStore extends JdbcJobStore {
 				.all()
 				.from()
 				.table(" ( " + sql + " ) t ")
-				.limit(start, end);
+				.limit(start, end - start);
 		return sql_limit;
 	}
 
