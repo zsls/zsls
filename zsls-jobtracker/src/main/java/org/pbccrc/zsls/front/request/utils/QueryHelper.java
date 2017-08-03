@@ -98,14 +98,23 @@ public class QueryHelper {
 		try {
 			List<ServerQuartzJob> sList = context.getJobStore().fetchQuartzJobs();
 			ResultNode result = new ResultNode();
+			ResultNode units = new ResultNode();
+			long recordsNum = sList.size();
 			for (ServerQuartzJob job : sList) {
 				ResultNode unitR = new ResultNode();
+				units.addChild(job.getJobId().toString(), unitR);
 				unitR.setStatus(job.getJobStat().toString());
+				unitR.setExpression(job.getExpression());
+				if (job.getLastExecuteTime() != null)
+					unitR.setLastExeTime(DateUtils.format(job.getLastExecuteTime()));
+				/*unitR.setStatus(job.getJobStat().toString())
 				if (job.getLastExecuteTime() != null)
 					unitR.setLastExeTime(DateUtils.format(job.getLastExecuteTime()));
 				unitR.setExpression(job.getExpression());
-				result.addChild(job.getJobId(), unitR);
+				result.addChild(job.getJobId(), unitR);*/
 			}
+			result.setUnits(units);
+			result.setRecordsNum(recordsNum);
 			return result;
 		} catch (Exception e) {
 			throw new SchedException(e);

@@ -2,6 +2,7 @@ package org.pbccrc.zsls.front.request.http;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +32,11 @@ public class HttpRequestMessage {
 		if (request.method().equals(HttpMethod.GET)) {
 			QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
 			Map<String, List<String>> params = decoder.parameters();
-			for (String key : params.keySet()) {
-				List<String> vallist = params.get(key);
+			Iterator<Map.Entry<String, List<String>>> it = params.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, List<String>> entry = it.next();
+				String key = entry.getKey();
+				List<String> vallist = entry.getValue();
 				if (vallist != null && vallist.size() > 0)
 					this.params.put(key, vallist.get(0));
 			}

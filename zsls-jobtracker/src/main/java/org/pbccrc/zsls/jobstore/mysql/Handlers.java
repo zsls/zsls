@@ -76,8 +76,10 @@ public class Handlers {
 				SimpleTaskInfo task = new SimpleTaskInfo();
 				task.statValue =  (int)rs.getLong(JdbcJobStore.COL_QT_STAT);
 				ExecuteResult er = JsonSerilizer.deserilize(rs.getString(JdbcJobStore.COL_QT_RESULT), ExecuteResult.class);
-				task.feedback = er.feedback;
-				task.keymessage = er.keymessage;
+				if (er != null) {
+					task.feedback = er.feedback;
+					task.keymessage = er.keymessage;
+				}
 				result.put(taskId, task);
 			}
 			return result;

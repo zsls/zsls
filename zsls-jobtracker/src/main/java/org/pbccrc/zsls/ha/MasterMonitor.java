@@ -1,5 +1,6 @@
 package org.pbccrc.zsls.ha;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -129,7 +130,10 @@ public class MasterMonitor extends AbstractService implements
 		Map<DomainInfo, List<NodeMeta>> metas = nmstore.getAllNodeMetas();
 		WorkerManager manager = context.getNodeManager();
 		DomainManager dmanager = context.getDomainManager();
-		for (DomainInfo info : metas.keySet()) {
+		Iterator<Map.Entry<DomainInfo, List<NodeMeta>>> it = metas.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<DomainInfo, List<NodeMeta>> entry = it.next();
+			DomainInfo info = entry.getKey();
 			String domain = info.name;
 			if (info.type == DomainType.DT) {
 				dmanager.addDTDomain(domain);
@@ -139,7 +143,7 @@ public class MasterMonitor extends AbstractService implements
 				dmanager.addRTDomain(domain);
 				context.getTaskProcessor().addRTDomain(domain);
 			}
-			List<NodeMeta> nodes = metas.get(info);
+			List<NodeMeta> nodes = entry.getValue();
 			if (nodes.size() == 0) {
 				dmanager.changeDomainStatus(domain, DomainStatus.Running);
 			}

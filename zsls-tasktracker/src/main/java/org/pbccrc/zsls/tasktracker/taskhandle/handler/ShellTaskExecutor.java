@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -198,10 +199,13 @@ public class ShellTaskExecutor implements TaskHandler {
 	// transfer params as jvm args
 	protected List<String> expandParams(Map<String, String> p) throws UnsupportedEncodingException {
 		List<String> list = new ArrayList<String>();
-		for (String k : p.keySet()) {
+		Iterator<Map.Entry<String, String>> it = p.entrySet().iterator(); 
+		while (it.hasNext()) {
+			Map.Entry<String, String> entry = it.next();
+			String k = entry.getKey();
 			if (ZslsConstants.TASKP_SHELL_DIR.equals(k) || ZslsConstants.TASKP_SHELL_SCRPT.equals(k))
 				continue;
-			String v = p.get(k);
+			String v = entry.getValue();
 			String jvmParam = "-D" + k + "=" + URLEncoder.encode(v, "UTF-8");
 			list.add(jvmParam);
 		}
@@ -226,10 +230,10 @@ public class ShellTaskExecutor implements TaskHandler {
 		path = FileUtils.createDirIfNotExist(path).getAbsolutePath();
 		String scriptPath = path + separator + PREF_SCRIPT + taskId + APPEND_CMD;
 		BufferedWriter writer = makeFileWriter(scriptPath);
-		if (dir.endsWith(separator)) 
+		/*if (dir.endsWith(separator)) 
 			dir.substring(0, dir.length() - 1);
 		if (script.startsWith(separator))
-			script.substring(1);
+			script.substring(1);*/
 		try {
 			writer.write("@echo off\n");
 			//not work with processbuilder.start 
@@ -238,8 +242,11 @@ public class ShellTaskExecutor implements TaskHandler {
 			writer.write("title=" + taskId + "\n");
 			writer.write("for /f \"tokens=2\" %%a in ('tasklist /v /nh /fi \"windowtitle eq "+ taskId + "\"') do echo %%a > \"" + pidfile + ".tmp\"\n");
 			writer.write("move " + pidfile + ".tmp " + pidfile + "\n");	*/
-			for (String k : params.keySet()) {
-				String v = params.get(k);
+			Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				String v = entry.getValue();
+				String k = entry.getKey();
 				writer.write("set " + k + " = " + v + "\n");
 			}
 			writer.write("cd " + dir + "\n");
@@ -265,8 +272,11 @@ public class ShellTaskExecutor implements TaskHandler {
 			String pidfile = path + separator + taskId + APPEND_PID;
 			writer.write("echo $$ > " + pidfile + ".tmp\n");	
 			writer.write("mv " + pidfile + ".tmp " + pidfile + "\n");
-			for (String k : params.keySet()) {
-				String v = params.get(k);
+			Iterator<Map.Entry<String, String>> it = params.entrySet().iterator(); 
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				String k = entry.getKey();
+				String v = entry.getValue();
 				writer.write("export " + k + "=" + v + "\n");
 			}
 			writer.write("cd " + dir + " && sh " + script);

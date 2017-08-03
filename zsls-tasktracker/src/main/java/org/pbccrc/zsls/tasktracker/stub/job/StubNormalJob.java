@@ -27,5 +27,4 @@ public class StubNormalJob {
 		// key message
 		System.out.println("%SCHED_MSG{key_message}%");
 	}
-
 }

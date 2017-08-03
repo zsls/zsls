@@ -3,6 +3,7 @@ package org.pbccrc.zsls.tasktracker.stub;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
@@ -30,23 +31,29 @@ public class StubTaskHandler implements TaskHandler {
 			Map<String, String> data = task.getParams();
 			// do task
 			System.out.println("### doing task " + task.getTaskId() + ", jobTime: " + task.getJobTime());
-			for (String k : data.keySet()) {
-				System.out.println("\t param: " + k + " -> " + data.get(k));
+			Iterator<Map.Entry<String, String>> it = data.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				String k = entry.getKey();
+				String v = entry.getValue();
+				System.out.println("\t param: " + k + " -> " + v);
 			}
 			long executeTime = (random.nextInt(10) + 10) * 100;
 			Thread.sleep(executeTime);
 			
 			ResultWriter writer = context.getResultWriter();
-			writer.writeFeedbackMessage("i'm feedback message");	// feedback message
-			writer.writeKeyMessage("key message");					// key message
+			// feedback message
+			writer.writeFeedbackMessage("i'm feedback message");	
+			// key message
+			writer.writeKeyMessage("key message");					
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("startTimes", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
-			writer.updateRuntimeParams(map);						// runtime parameters
+			// runtime parameters
+			writer.updateRuntimeParams(map);						
 			return false;
 		} catch (Exception ignore) {
 			ignore.printStackTrace();
 			return false;
 		}
 	}
-
 }

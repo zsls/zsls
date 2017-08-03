@@ -2,6 +2,7 @@ package org.pbccrc.zsls.utils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +52,11 @@ public class TaskUtil extends JsonSerilizer {
 		Map<String, String> params = new HashMap<String, String>(iT.params);
 		Map<String, String> taskMeta = sjob.getRuntimeParams(task.getTaskId());
 		if (taskMeta != null) {
-			for (String k : taskMeta.keySet()) {
-				params.put(k, taskMeta.get(k));
+			Iterator<Map.Entry<String, String>> it = taskMeta.entrySet().iterator();
+			
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				params.put(entry.getKey(), entry.getValue());
 			}
 		}
 		task.setParams(params);
