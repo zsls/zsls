@@ -264,7 +264,7 @@ public abstract class JdbcJobStore extends JdbcAbstractAccess implements JobStor
 				.table(getUnitTable(domain));
 		sql = date == null ? sql : sqlSelectWhereDateMatch(sql, date);
 		Object jobsNum = sql.single();
-		return (Long)jobsNum;
+		return Long.parseLong(jobsNum.toString());
 	}
 	
 	@Override
