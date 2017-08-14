@@ -30,12 +30,13 @@ public class DomainManager {
 			
 			.addTransition(DomainStatus.Prepared, DomainStatus.Running)
 			
-			.addTransition(DomainStatus.Running, DomainStatus.Abandon)
+			//.addTransition(DomainStatus.Running, DomainStatus.Abandon)
 			.addTransition(DomainStatus.Running, DomainStatus.Stop)
 			.addTransition(DomainStatus.Running, DomainStatus.Pause)
 			
 			.addTransition(DomainStatus.Pause, DomainStatus.Running)
 			.addTransition(DomainStatus.Stop, DomainStatus.Running)
+			.addTransition(DomainStatus.Stop, DomainStatus.Abandon)
 			.build();
 	
 	private Map<String, Pair<ZslsStateMachine<DomainStatus>, DomainInfo>> domains;
