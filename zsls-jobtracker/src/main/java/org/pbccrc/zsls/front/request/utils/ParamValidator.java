@@ -216,9 +216,11 @@ public class ParamValidator {
 			else if (o instanceof ITask) {
 				if (visitedMap.containsKey(((ITask)o).id))
 						return false;
-				for (String k :((ITask)o).params.keySet()) {
-					if (k == null || k.contains(" "))
-						return false;
+				if (null != ((ITask)o).params) {
+					for (String k :((ITask)o).params.keySet()) {
+						if (k == null || k.contains(" "))
+							return false;
+					}
 				}
 				if (((ITask)o).partitions < 0)
 					return false;
