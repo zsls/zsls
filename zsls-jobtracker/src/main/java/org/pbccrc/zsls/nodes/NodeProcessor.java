@@ -12,6 +12,7 @@ import org.pbccrc.zsls.jobengine.JobEngine;
 import org.pbccrc.zsls.jobengine.Task;
 import org.pbccrc.zsls.jobengine.Task.TaskStat;
 import org.pbccrc.zsls.tasks.LocalJobManager;
+import org.pbccrc.zsls.tasks.TaskEvent;
 import org.pbccrc.zsls.utils.DomainLogger;
 import org.pbccrc.zsls.utils.ThreadLocalBuffer;
 
@@ -24,6 +25,7 @@ public class NodeProcessor implements EventHandler<NodeEvent>{
 		this.context = context;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void handle(NodeEvent event) {
 		NodeId id = event.getNodeId();
@@ -61,6 +63,8 @@ public class NodeProcessor implements EventHandler<NodeEvent>{
 					L.info(domain, b.toString());	
 				}
 				manager.removeWorkNode(event.getDomain(), event.getNodeId());
+				TaskEvent taskEvent = TaskEvent.getTriggerEvent(domain, dtype);
+				context.getTaskDispatcher().getEventHandler().handle(taskEvent);
 			}
 		}
 	}
